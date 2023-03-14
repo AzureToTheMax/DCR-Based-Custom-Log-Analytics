@@ -1,0 +1,150 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "511252eb-07cb-40b3-91c9-d4a199ad1e4e",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time Range",
+            "type": 4,
+            "description": "Select Time Range of Data to Display",
+            "isRequired": true,
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2419200000
+                },
+                {
+                  "durationMs": 2592000000
+                }
+              ]
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": {
+              "durationMs": 2592000000
+            }
+          },
+          {
+            "id": "ba61ddb9-030e-4ba2-ba0e-f552ee510d65",
+            "version": "KqlParameterItem/1.0",
+            "name": "DeviceSearchName",
+            "label": "Device Search Name",
+            "type": 1,
+            "description": "Device to Search for",
+            "isRequired": true,
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": "PCNAME"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters - 0"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SampleCollection_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| extend ComputerUpTimeNegative = toint(ComputerUpTime) * -1\r\n| extend LastBoot = datetime_add('day',(ComputerUpTimeNegative),now())\r\n| summarize count() by bin(todatetime(LastBoot), 1d)\r\n| render barchart",
+        "size": 0,
+        "title": "Chart of last startup",
+        "noDataMessage": "No data found!",
+        "noDataMessageStyle": 4,
+        "showRefreshButton": true,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "customWidth": "50",
+      "name": "Chart of last startup",
+      "styleSettings": {
+        "maxWidth": "50"
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SampleCollection_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| where isnotempty( ComputerName)\r\n| extend ComputerUpTimeNegative = toint(ComputerUpTime) * -1\r\n| extend LastBoot = datetime_add('day',(ComputerUpTimeNegative),now())\r\n| project TimeGenerated, LastBoot, ComputerName, SerialNumber, Model\r\n| sort by LastBoot asc",
+        "size": 0,
+        "title": "List of last startup",
+        "noDataMessage": "No data found!",
+        "noDataMessageStyle": 4,
+        "showRefreshButton": true,
+        "showExportToExcel": true,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "customWidth": "50",
+      "name": "List of last startup",
+      "styleSettings": {
+        "maxWidth": "50"
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SampleCollection_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project TimeGenerated, ComputerName, SerialNumber, Model, AzureADDeviceID, ManagedDeviceID, ManagedDeviceName",
+        "size": 0,
+        "title": "List of devices",
+        "noDataMessage": "No data found!",
+        "noDataMessageStyle": 4,
+        "showRefreshButton": true,
+        "showExportToExcel": true,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "customWidth": "50",
+      "name": "List of devices",
+      "styleSettings": {
+        "maxWidth": "50"
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SampleCollection_CL\r\n| where TimeGenerated{TimeRange}\r\n| where ComputerName contains \"{DeviceSearchName}\"\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| extend NetworkAdapters_Expanded = todynamic(NetworkAdapters)\r\n| mv-expand NetworkAdapters_Expanded\r\n| evaluate bag_unpack(NetworkAdapters_Expanded )\r\n| extend IPv4_Address = NetIPv4Adress \r\n| project TimeGenerated, ComputerName, IPv4_Address, NetProfileName, NetInterfaceDescription",
+        "size": 0,
+        "title": "Most recent network information",
+        "noDataMessage": "No data found!",
+        "noDataMessageStyle": 4,
+        "showRefreshButton": true,
+        "showExportToExcel": true,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "customWidth": "50",
+      "name": "Most recent network information",
+      "styleSettings": {
+        "maxWidth": "50"
+      }
+    }
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
