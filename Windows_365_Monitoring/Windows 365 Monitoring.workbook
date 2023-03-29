@@ -1,0 +1,1244 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "<img src=\"https://azuretothemax.files.wordpress.com/2023/03/image0001.png?w=1024\" height=\"100\")>"
+      },
+      "customWidth": "15",
+      "name": "text - 8",
+      "styleSettings": {
+        "maxWidth": "15"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "\r\n# Windows 365 Monitoring\r\n---\r\nThis workbook is used to monitor your Windows 365 Enviroment. Use the below selectors to alter the viewable data Time Range, Regions to veiw data from, and time range for the Cost Monitoring and Cost Prediction pages. \r\n\r\nMore information can be found at https://azuretothemax.net/log-analytics-index/\r\n\r\n\r\n",
+        "style": "info"
+      },
+      "customWidth": "85",
+      "name": "text - 0",
+      "styleSettings": {
+        "maxWidth": "85"
+      }
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "51251626-76fd-4cd9-abfc-37543b67238e",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time Range",
+            "type": 4,
+            "description": "This controls how much X time worth of data back in time to display.",
+            "isRequired": true,
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 300000
+                },
+                {
+                  "durationMs": 900000
+                },
+                {
+                  "durationMs": 1800000
+                },
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2419200000
+                },
+                {
+                  "durationMs": 2592000000
+                }
+              ],
+              "allowCustom": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": {
+              "durationMs": 604800000
+            }
+          },
+          {
+            "id": "cca2c51c-5775-4b24-b217-fd47863f6cd0",
+            "version": "KqlParameterItem/1.0",
+            "name": "Region",
+            "label": "Region(s)",
+            "type": 2,
+            "description": "Choose the region(s) to display data for.",
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "jsonData": "[\r\n    \"US-East\",\r\n    \"India\",\r\n    \"Japan\"\r\n]",
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": [
+              "US-East",
+              "India",
+              "Japan"
+            ]
+          },
+          {
+            "id": "ad430251-39bc-4c68-bb3a-7c4dfb537351",
+            "version": "KqlParameterItem/1.0",
+            "name": "CostTimeRange",
+            "label": "Cost Time Range in DAYS",
+            "type": 1,
+            "description": "Select the time range the cost tabs such as 1d, 3d, 7d, 30d. Must be KQL formatted and is case sensitive.",
+            "isRequired": true,
+            "value": "7d"
+          },
+          {
+            "id": "38cc2116-7f33-45db-98e6-aaf3504c9157",
+            "version": "KqlParameterItem/1.0",
+            "name": "CostPerGB",
+            "label": "Cost Per GB",
+            "type": 1,
+            "description": "Cost per GB ingested in your region. See Azure pricing calculator.",
+            "value": "2.30"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters - 3"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "4d0ee788-3678-42a8-9df4-bc0325ea7de3",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Connection Dashboard",
+            "subTarget": "ConnectionDashboard",
+            "preText": "Dashboard",
+            "postText": "",
+            "style": "link"
+          },
+          {
+            "id": "ac48d7ab-c997-494c-8531-1aa044809627",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Application Dashboard",
+            "subTarget": "Application Dashboard",
+            "style": "link"
+          },
+          {
+            "id": "07de5b60-c132-483d-89e8-60f28d1a1789",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Ingestion Information",
+            "subTarget": "IngestionInformation",
+            "style": "link"
+          },
+          {
+            "id": "7ab3019e-4c5b-437d-a162-15bba520bd2b",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Cost Monitoring",
+            "subTarget": "CostMonitoring",
+            "style": "link"
+          },
+          {
+            "id": "237b3c5a-f3e7-4892-ac41-f3d27952fde9",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Cost Prediction",
+            "subTarget": "CostPrediction",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "links - 7"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Connection Dashboard",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# RDP Disconnects\r\nThese queries display information pertaining to the RDP disconnect events for Cloud PC’s. These events are generated whenever a user disconnects from an active RDP session without logging off or shutting down, including on purpose. This can be used to track unexpected groups or spikes in disconnects, determine who it affected, determine how broad it was, and determine exact times.\r\n\r\n---\r\n\r\n## Windows 365 Disconnects by Region - Grouped by 10 Minutes\r\nThis graphs all RDP disconnects out for the selected time range and regions and groups events by 10 minutes. This graph lets you easily and visually see when a spike happened. \r\n\r\n---\r\n\r\n## Detailed Machine Disconnects in Selected Time Range\r\nThis will provide the raw logs of when a session was dropped for precisely determining who was effected and when. This is best viewed by exporting the results using the download arrow in the top right of the query. Sometimes the download option will compress into a triple dot icon located in the same place.\r\n\r\n---\r\n\r\n## Total Machine Disconnects per Device in Selected Time Range\r\nThis provides a sum of all disconnects for all machines in the selected regions for the selected duration. This is helpful for finding outliers who appear to be disconnecting at an unusual and suspicious rate. This is best viewed by exporting the results using the download arrow in the top right of the query. Sometimes the download option will compress into a triple dot icon located in the same place.\r\n",
+              "style": "info"
+            },
+            "name": "text - 1"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| where EventType == \"RDP-Disconnect\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| summarize count() by region, bin(todatetime(TimeOfLogUTC), 10m)\r\n| render timechart ",
+              "size": 0,
+              "title": "Windows 365 Disconnects by Region - Grouped by 10 Minutes",
+              "noDataMessage": "No data found!!!",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "US-East",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "Japan",
+                    "color": "turquoise"
+                  },
+                  {
+                    "seriesName": "India",
+                    "color": "yellow"
+                  }
+                ]
+              }
+            },
+            "name": "Windows 365 Disconnects by Region - Grouped by 10 Minutes"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| where EventType == \"RDP-Disconnect\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| project TimeOfLogUTC, ComputerName, region, EventType, User, Message\r\n| sort by todatetime(TimeOfLogUTC)",
+              "size": 0,
+              "title": "Detailed Machine Disconnects in Selected Time Range",
+              "noDataMessage": "No data?",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Detailed Machine Disconnects in Selected Time Range",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| where EventType == \"RDP-Disconnect\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| summarize Count=count() by ComputerName, region\r\n| sort by Count desc",
+              "size": 0,
+              "title": "Total Machine Disconnects per Device in Selected Time Range",
+              "noDataMessage": "No data?",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Total Machine Disconnects per Device in Selected Time Range",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "# TCP/UDP Connection Info\r\n\r\nThese query’s display information pertaining to the connection type (UDP or TCP) events for all Cloud PC’s. These events are generated multiple times throughout a consistent session. This can be used to track where connections are, and are not, being made using the optimal UDP Shortpath connection.\r\nLearn more here: https://learn.microsoft.com/en-us/azure/virtual-desktop/rdp-shortpath?tabs=managed-networks\r\n\r\n---\r\n\r\n## TCP/UDP Connection Info\r\n\r\nThis a pie chart showing the breakdown of TCP versus UDP for all connections that have been made during the selected time range and in the selected regions. This gives you an at-a-glance answer as to what percentage of connections are being optimally made with UDP.\r\n\r\n---\r\n\r\n## TCP/UDP Connection Info - 60 Minutes by Region\r\n\r\nThis graph shows all connections grouped by 60 minutes as either TCP or UDP for the selected regions and during the selected time range. This graph can be helpful for identify outages or change events that might have affected one or all regions ability to connect with UDP or TCP.\r\n\r\n---\r\n\r\n## Detailed Connection Events in Selected Time Range\r\n\r\nThis provides exact information on the station and time that X kind of connection was being made. This is to determine what kinds of connections are being established to a specific machine. This displays data for the selected regions and time frame. This is best viewed by exporting the results using the download arrow in the top right of the query. Sometimes the download option will compress into a triple dot icon located in the same place.\r\n\r\n---\r\n\r\n## Machine Connection Summary for Selected Time Range\r\n\r\nThis provides a summary of how many of X connection type have been made to a given machine in the selected time range. It displays all machines in the selected region. It is helpful for quickly locating problem stations which seem to be failing to connect via UDP. This is best viewed by exporting the results using the download arrow in the top right of the query. Sometimes the download option will compress into a triple dot icon located in the same place.\r\n\r\n",
+              "style": "info"
+            },
+            "name": "text - 3"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where TimeGenerated{TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| where EventType == \"TCP Connection\" or EventType == \"UDP Connection\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| summarize Count=count() by EventType, region, bin(todatetime(TimeOfLogUTC), 10m)\r\n| render piechart",
+              "size": 0,
+              "title": "TCP/UDP Connection Info",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "30",
+            "name": "TCP/UDP Connection Info",
+            "styleSettings": {
+              "maxWidth": "30"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where TimeGenerated{TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| where EventType == \"TCP Connection\" or EventType == \"UDP Connection\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| summarize Count=count() by EventType, region, bin(todatetime(TimeOfLogUTC), 60m)\r\n| render areachart",
+              "size": 0,
+              "title": "TCP/UDP Connection Info - 60 Minutes by Region",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "EventType",
+                "createOtherGroup": null
+              }
+            },
+            "customWidth": "70",
+            "name": "TCP/UDP Connection Info - 60 Minutes by Region",
+            "styleSettings": {
+              "maxWidth": "70"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where TimeGenerated{TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| where EventType == \"TCP Connection\" or EventType == \"UDP Connection\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| project TimeOfLogUTC, ComputerName, region, EventType\r\n| sort by todatetime(TimeOfLogUTC)",
+              "size": 0,
+              "title": "Detailed Connection Events in Selected Time Range",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Detailed Connection Events in Selected Time Range",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where TimeGenerated{TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| where EventType == \"TCP Connection\" or EventType == \"UDP Connection\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| project TimeOfLogUTC, ComputerName, region, EventType\r\n| summarize Count=count() by ComputerName, region, EventType\r\n| sort by Count desc",
+              "size": 0,
+              "title": "Machine Connection Summary for Selected Time Range",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Machine Connection Summary for Selected Time Range",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "# Machine Uptime\r\n\r\nThese two queries provide a visual and detailed list of the uptime of machines. It displays data from the selected regions and only data which was ingested in the selected time range. However, an uptime dating outside of the selected time range can/will be displayed so long as the data point itself was ingested during the selected time range.\r\n\r\nFor example, if a machine reported an hour ago that it has a six-month uptime, and your time range is set to 3 hours, this data will display because the data point was ingested only an hour ago.\r\n\r\nThis does NOT use Event Logs and instead pulls from the machine’s uptime itself. This is typically accurate to within 10 seconds of the true event. By default, this field reports in whenever (and only when) an RDP Disconnect or Tunnel event reports in. As such, unused machines may stop reporting into this field.\r\n",
+              "style": "info"
+            },
+            "name": "text - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| where EventType == \"Startup\"\r\n| summarize arg_max(TimeOfLogUTC,*) by ComputerName\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| summarize Count=count() by bin(todatetime(TimeOfLogUTC), 1d)",
+              "size": 0,
+              "title": "Machine Uptime - Latest Startup Event",
+              "noDataMessage": "No data?",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "barchart",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "Count",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Machine Uptime - Latest Startup Event",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| where EventType == \"Startup\"\r\n| summarize arg_max(TimeOfLogUTC,*) by ComputerName\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| extend LastStart = TimeOfLogUTC\r\n| extend IngestionTime = TimeGenerated\r\n| project ComputerName, LastStart, IngestionTime, region\r\n| sort by LastStart asc",
+              "size": 0,
+              "title": "Machine Uptime - Latest Startup Event - Exportable",
+              "noDataMessage": "No data?",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Machine Uptime - Latest Startup Event - Exportable",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "ConnectionDashboard"
+      },
+      "name": "Connection Dashboard",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Application Dashboard",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Software Update Status\r\nUse this page to determine the software versions on all machines. \r\nThe below drop down can be used to toggle between the current four available and tracked pieces of software. Data will then be displayed for that piece of software for data points ingested during the selected time range and in the selected regions. \r\n\r\n---\r\n\r\n## Current X Version Breakdown\r\nThis chart shows the current (most up to date data points only per device name) version breakdown of the selected app. This shows data points ingested during the selected time range and for the selected regions.\r\n\r\n---\r\n\r\n## Historical X version Breakdown\r\nThis chart shows the historical version breakdown of the selected app. It groups these by one day and allows you to see when an update is being rolled out as well as how far it has progressed, as well as what lingering version may also be hiding out there. This shows data points ingested during the selected time range and for the selected regions.\r\n\r\n---\r\n\r\n## Current X Version Breakdown: Exportable\r\nThis chart shows the current (most up to date data points only per device name) breakdown of the selected app. This shows data points ingested during the selected time range and for the selected regions. It will provide exact and full details on the data point in question and is useful for understanding who has what version on an exact basis. This is best viewed by exporting the results using the download arrow in the top right of the query which is sometimes hidden inside a triple dot icon.\r\n\r\n",
+              "style": "info"
+            },
+            "name": "text - 4"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "37629823-a1c4-4ae8-847f-d458154b525a",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "Software",
+                  "label": "Software Selector",
+                  "type": 2,
+                  "description": "Select the software to display information of",
+                  "isRequired": true,
+                  "typeSettings": {
+                    "additionalResourceOptions": []
+                  },
+                  "jsonData": "[\r\n    \"Microsoft Teams\",\r\n    \"Remote Desktop WebRTC Redirector Service\",\r\n    \"MsMmrHostMsi\",\r\n    \"Remote Desktop Multimedia Redirection Service\"\r\n]",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "value": "Microsoft Teams"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - 8"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Apps_CL\r\n| where TimeGenerated{TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| extend AppPayLoad_Extended = todynamic(AppPayLoad)\r\n| mv-expand AppPayLoad_Extended\r\n| evaluate bag_unpack( AppPayLoad_Extended)\r\n| project TimeGenerated, ComputerName, ScriptVersion, ManagedDeviceID, ManagedDeviceName, AppName, AppVersion, AppPublisher, AppUninstallRegPath, AppUninstallString\r\n| where AppName == \"{Software}\"\r\n| summarize Count=count() by AppVersion\r\n| render piechart\r\n",
+              "size": 0,
+              "title": "Current {Software} Version Breakdown",
+              "noDataMessage": "No data?",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "30",
+            "name": "Current Microsoft Teams Version Breakdown",
+            "styleSettings": {
+              "maxWidth": "30"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Apps_CL\r\n| where TimeGenerated{TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| extend AppPayLoad_Extended = todynamic(AppPayLoad)\r\n| mv-expand AppPayLoad_Extended\r\n| evaluate bag_unpack( AppPayLoad_Extended)\r\n| project TimeGenerated, ComputerName, ScriptVersion, ManagedDeviceID, ManagedDeviceName, AppName, AppVersion, AppPublisher, AppUninstallRegPath, AppUninstallString\r\n| where AppName == \"{Software}\"\r\n| summarize count() by AppVersion, bin(TimeGenerated,1d)\r\n| render areachart",
+              "size": 0,
+              "title": "Historical {Software} Version Breakdown",
+              "noDataMessage": "No data?",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "70",
+            "name": "Historical {Software} Version Breakdown",
+            "styleSettings": {
+              "maxWidth": "70"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Apps_CL\r\n| where TimeGenerated{TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| extend AppPayLoad_Extended = todynamic(AppPayLoad)\r\n| mv-expand AppPayLoad_Extended\r\n| evaluate bag_unpack( AppPayLoad_Extended)\r\n| project TimeGenerated, ComputerName, region, AppName, AppVersion,  AppPublisher, AppUninstallRegPath, AppUninstallString, ManagedDeviceID, ManagedDeviceName\r\n| where AppName == \"{Software}\"\r\n| sort by AppVersion\r\n| render list\r\n",
+              "size": 0,
+              "title": "Current {Software} Version Breakdown: Exportable",
+              "noDataMessage": "No data?",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "Current Microsoft Teams Version Breakdown: Exportable"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Application Dashboard"
+      },
+      "name": "Application Dashboard",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Power Management Ingestion Information",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Windows 365 Apps Ingestion Information\r\nThis page is primarily used for monitoring the volume of incoming data and monitoring the deployment of updates.",
+              "style": "info"
+            },
+            "name": "text - 6"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Apps_CL\r\n| where ComputerName has \"CPC-\"\r\n| where TimeGenerated {TimeRange}\r\n| summarize arg_max(TimeGenerated, *) by ComputerName, ScriptVersion\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| summarize Total_Endpoints=count() by ScriptVersion, region\r\n",
+              "size": 0,
+              "title": "Count of Devices in Time Range",
+              "noDataMessage": "No data found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "20",
+            "name": "Count of Devices in Time Range",
+            "styleSettings": {
+              "maxWidth": "20"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Apps_CL\r\n| where TimeGenerated {TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| summarize count() by ScriptVersion\r\n| render piechart ",
+              "size": 0,
+              "title": "Script Version by Data Point Count",
+              "noDataMessage": "No Data found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "",
+                    "label": "None",
+                    "color": "redDark"
+                  },
+                  {
+                    "seriesName": "V12",
+                    "color": "greenDark"
+                  },
+                  {
+                    "seriesName": "PR003",
+                    "color": "redBright"
+                  },
+                  {
+                    "seriesName": "V13",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "30",
+            "name": "query - 4",
+            "styleSettings": {
+              "maxWidth": "30"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Apps_CL\r\n| where TimeGenerated{TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| summarize count() by bin(TimeGenerated,1h), ScriptVersion\r\n| render areachart",
+              "size": 0,
+              "title": "Chart of Incoming Events by Log Version: 1H",
+              "noDataMessage": "No Data Found for Selected Range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "<empty>",
+                    "label": "None",
+                    "color": "redDark"
+                  },
+                  {
+                    "seriesName": "V12",
+                    "color": "yellow"
+                  },
+                  {
+                    "seriesName": "V13",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "PR003",
+                    "color": "redDark"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 5",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "# Windows 365 Events Ingestion Information\r\nThis page is primarily used for monitoring the volume of incoming data and monitoring the deployment of updates.",
+              "style": "info"
+            },
+            "name": "text - 7"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where TimeGenerated {TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| summarize arg_max(TimeGenerated, *) by ComputerName, ScriptVersion\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| summarize Total_Endpoints=count() by ScriptVersion, region\r\n",
+              "size": 0,
+              "title": "Count of Devices in Time Range",
+              "noDataMessage": "No data found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "20",
+            "name": "Count of Devices in Time Range",
+            "styleSettings": {
+              "maxWidth": "20"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where TimeGenerated {TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| summarize count() by ScriptVersion\r\n| render piechart ",
+              "size": 0,
+              "title": "Script Version by Data Point Count",
+              "noDataMessage": "No Data found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "",
+                    "label": "None",
+                    "color": "redDark"
+                  },
+                  {
+                    "seriesName": "V12",
+                    "color": "greenDark"
+                  },
+                  {
+                    "seriesName": "PR003",
+                    "color": "redBright"
+                  },
+                  {
+                    "seriesName": "V13",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "30",
+            "name": "query - 4",
+            "styleSettings": {
+              "maxWidth": "30"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where TimeGenerated{TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| summarize count() by bin(TimeGenerated,1h), ScriptVersion\r\n| render areachart",
+              "size": 0,
+              "title": "Chart of Incoming Events by Log Version: 1H",
+              "noDataMessage": "No Data Found for Selected Range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "<empty>",
+                    "label": "None",
+                    "color": "redDark"
+                  },
+                  {
+                    "seriesName": "V12",
+                    "color": "yellow"
+                  },
+                  {
+                    "seriesName": "V13",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "PR003",
+                    "color": "redDark"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 5",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| sort by TimeOfLogUTC\r\n| summarize count() by EventType, bin(todatetime(TimeOfLogUTC), 1h)",
+              "size": 0,
+              "title": "Chart of all incomming data Grouped by 1H",
+              "noDataMessage": "No data found!!!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "barchart",
+              "tileSettings": {
+                "showBorder": false,
+                "titleContent": {
+                  "columnMatch": "EventType",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "count_",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "EventType",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "count_",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "mapSettings": {
+                "locInfo": "LatLong",
+                "sizeSettings": "count_",
+                "sizeAggregation": "Sum",
+                "legendMetric": "count_",
+                "legendAggregation": "Sum",
+                "itemColorSettings": {
+                  "type": "heatmap",
+                  "colorAggregation": "Sum",
+                  "nodeColorField": "count_",
+                  "heatmapPalette": "greenRed"
+                }
+              }
+            },
+            "name": "Chart of all incomming data Grouped by 1H"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "# Windows 365 Event Ingestion Counts\r\nThese chart on the left displays all ingested events. The chart on the right displays all ingested events with a duplicate filter. These two charts should look the same, including the counts at the bottom. Otherwise, duplicate events are being ingested or there is something confusing the filter.",
+              "style": "info"
+            },
+            "name": "text - 11"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| sort by TimeOfLogUTC\r\n| summarize count() by ComputerName, bin(todatetime(TimeOfLogUTC), 1h)",
+              "size": 0,
+              "title": "Chart of all Incomming Data by Device",
+              "noDataMessage": "No data found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "scatterchart",
+              "chartSettings": {
+                "group": "ComputerName",
+                "createOtherGroup": 50
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart of all Incomming Data by Device",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Windows365Events_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where ComputerName has \"CPC-\"\r\n| extend \r\n    region = iff(NetworkAdapters has \"10.1\", \"US-East\", (iff(NetworkAdapters has \"10.2\", \"India\", \"Japan\")))\r\n| where region has_any ({Region})\r\n| sort by TimeOfLogUTC\r\n| distinct TimeOfLogUTC, ComputerName, EventID, Message, EventType\r\n| summarize count() by ComputerName, bin(todatetime(TimeOfLogUTC), 1h)\r\n",
+              "size": 0,
+              "title": "Chart of all Incomming Data by Device: Filtered",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "scatterchart"
+            },
+            "customWidth": "50",
+            "name": "Chart of all Incomming Data by Device: Filtered",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "IngestionInformation"
+      },
+      "name": "Power Management Ingestion Information",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Cost Monitoring",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Warning! \r\n---\r\nThe following calculations rely on the \"Cost Time Range in DAYS\" value at the top, NOT the main \"Time Range.\"\r\nThis value MUST be entered in the KQL Day format such as 1d, 2d, 7d, 30d. This is case sensitive! \r\n\r\nThe following calculations rely on the \"Cost Per GB' value at the top. This should be the ingestion cost per GB in your region. You can find these values on the cost calculator. \r\nhttps://azure.microsoft.com/en-us/pricing/details/monitor/\r\n",
+              "style": "warning"
+            },
+            "name": "Warning"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "## Query Info\r\n\r\n### Total Endpoints for Time Range (All Logs) \r\nHow many unique devices have checked in during the selected time range to all logs displayed here. Effectively, a count of devices you manage that have been seen during the selected Cost Time Range.\r\n\r\n---\r\n\r\n### Chart of Data per-day by Data Size MB\r\nChart of the amount of MB each Table has received daily during the selected Cost Time Range.\r\n\r\n---\r\n\r\n### Chart of Data per-day by Data Count\r\nChart of the amount of data points coming into each table by day during the selected time range. Again, the amount of data points does not 1-1 correlate to the size of the data which was received. Cost is based on size, not count.\r\n\r\n---\r\n\r\n### Billable Summary for Selected Range\r\nThe amount of MB each log has ingested in the selected time range, what percentage of the total MB data ingestion that log is, is that log billable, and how much would that log cost based on the rate provided at the top in the CostPerGB field.\r\nYou can find these values on the cost calculator. \r\nhttps://azure.microsoft.com/en-us/pricing/details/monitor/\r\n",
+              "style": "info"
+            },
+            "name": "text - 4"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "union withsource = tt *\r\n| where TimeGenerated > ago({CostTimeRange})\r\n| distinct  ComputerName\r\n| summarize Total_Endpoints=count()\r\n",
+              "size": 4,
+              "title": "Total Endpoints for Time Range (All Logs)",
+              "noDataMessage": "No data!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table"
+            },
+            "customWidth": "20",
+            "name": "query - 8",
+            "styleSettings": {
+              "maxWidth": "20"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Usage\r\n| where TimeGenerated > ago({CostTimeRange})\r\n| project TimeGenerated, DataType, Solution, Quantity\r\n| where DataType in ('Windows365Apps_CL', 'Windows365Events_CL')\r\n| summarize IngestionVolumeMB=sum(Quantity) by  bin(TimeGenerated,1d), DataType\r\n| sort by IngestionVolumeMB\r\n| project DataType, IngestionVolumeMB, TimeGenerated\r\n| render timechart \r\n",
+              "size": 0,
+              "title": "Chart of Data per-day by Data Size MB",
+              "noDataMessage": "No data found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "unstackedbar",
+              "tileSettings": {
+                "showBorder": false,
+                "titleContent": {
+                  "columnMatch": "EventType_s",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "count_",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "EventType_s",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "count_",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "mapSettings": {
+                "locInfo": "LatLong",
+                "sizeSettings": "count_",
+                "sizeAggregation": "Sum",
+                "legendMetric": "count_",
+                "legendAggregation": "Sum",
+                "itemColorSettings": {
+                  "type": "heatmap",
+                  "colorAggregation": "Sum",
+                  "nodeColorField": "count_",
+                  "heatmapPalette": "greenRed"
+                }
+              }
+            },
+            "customWidth": "40",
+            "name": "Chart of all incomming date for selected range",
+            "styleSettings": {
+              "maxWidth": "40"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "union withsource = tt *\r\n| where TimeGenerated > ago({CostTimeRange})\r\n| summarize count() by bin(TimeGenerated,1d), Source=tt\r\n| render timechart title = \"Monthly growth\"",
+              "size": 0,
+              "title": "Chart of Data per-day by Data Count",
+              "noDataMessage": "No data found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "unstackedbar"
+            },
+            "customWidth": "40",
+            "name": "query - 4",
+            "styleSettings": {
+              "maxWidth": "40"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let TotalIngestion=toscalar(\r\n    Usage\r\n    | where TimeGenerated > ago({CostTimeRange})\r\n    | summarize IngestionVolume=sum(Quantity));\r\nUsage\r\n| where TimeGenerated > ago({CostTimeRange})\r\n| project TimeGenerated, DataType, Solution, Quantity, IsBillable\r\n| where DataType in ('Windows365Apps_CL', 'Windows365Events_CL')\r\n| summarize\r\n    IngestionVolumeMB=round(sum(Quantity),2),\r\n    IngestionPercent=round(((sum(Quantity)) / TotalIngestion)*100,2),\r\n    Billable=any(IsBillable)\r\n    by Solution, DataType\r\n| sort by IngestionVolumeMB\r\n| extend Billable_Dollars_Estimate=round(((IngestionVolumeMB/1024)*({CostPerGB})),2)\r\n| project Solution, LogName=(DataType), IngestionVolumeMB, IngestionPercent, Billable, Billable_Dollars_Estimate",
+              "size": 3,
+              "title": "Billable Summary for Selected Range",
+              "noDataMessage": "No data found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "IngestionPercent",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "palette": "greenRed"
+                    }
+                  },
+                  {
+                    "columnMatch": "Billable",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "true",
+                          "representation": "green",
+                          "text": "True"
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "false",
+                          "representation": "redDark",
+                          "text": "False"
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": null,
+                          "text": "{0}{1}"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "sortBy": []
+            },
+            "name": "query - 5"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "CostMonitoring"
+      },
+      "name": "Cost Monitoring",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Cost Prediction",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Warning! \r\n---\r\nThe following calculations rely on the \"Cost Time Range in DAYS\" value at the top, NOT the main \"Time Range.\"\r\nThis value MUST be entered in the KQL Day format such as 1d, 2d, 7d, 30d. This is case sensitive! \r\n\r\nThe following calculations rely on the \"Cost Per GB' value at the top. This should be the ingestion cost per GB in your region. You can find these values on the cost calculator. \r\nhttps://azure.microsoft.com/en-us/pricing/details/monitor/\r\n",
+              "style": "warning"
+            },
+            "name": "Warning"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "# How to use the Cost Prediction\r\n\r\nFollow these instructions carefully!\r\nThis is used to calculate a monthly (30 day) cost scale prediction. It works by evaluating how much data in GB has come in over the past X days, how many devices sent in data in the past X days, and scaling that up to however many devices you want over the course of a month.\r\n\r\nThis is only used to calculate ingestion cost, not storage cost or Function App cost or any of the other components. Storage for 30 days is free.\r\n\r\n1. Cost Time Range in Days (very top) - Make sure you have set a time range in days at the top of the work book. Valid values are only in days such as 7d, 14d, 30d, etc (case sensitive). \r\n\t- Do NOT set a time range in any other amount (hours, minutes, etc) or this will not work! \r\n\t- Do not use a value of less than 7d (7 days) for a price prediction!\r\n\t- You need to have had a steady ingestion over the time range days! Don't scope to 1000 new devices then try to run a prediction only 3 days later!\r\n\r\n2. Select Log - choose which Table to run a prediction on.\r\n\r\n3. Total Organization Device Count - This is the count of devices you want to run a prediction of. So, if you want to know how much it would cost to scale out to 10,000 devices, put in 10000.\r\n\r\n4. Total Endpoints\r\nDo NOT manually edit this!\r\nThis automatically pulls in the count of devices that have checked in during the given time period. You can fact check this number using the Ingestion Information page so long as you adjust both the Cost Time Range and Time Range values to the same range. \r\n\t- If you manually edit this, you might knock out the query. You will have to re-download the JSON and pull the query out from within, I can't paste it here due to the formatting. \r\n\r\n5. Time Range Numerical\r\nDo NOT manually edit this value!\r\nThis should automatically pull the amount of days you have the time range set to. For instance, if you set the \"Time Range\" to 7d the \"Time Range Numerical\" should say 7. \r\n\t- Manually editing it will break this entire calculation and may remove the query. You will have to re-download the JSON and pull the query out from within, I can't paste it here due to the formatting. \r\n\r\n6. Cost Per GB (very top)\r\nThis needs to be manually set to the cost per GB ingested of your Log Analytics. You can find these values on the cost calculator. \r\nhttps://azure.microsoft.com/en-us/pricing/details/monitor/\r\n\r\n",
+              "style": "warning"
+            },
+            "name": "text - 7"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "713a92c1-a4c3-4d3e-b57a-7807f0ce0311",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "SelectedLog",
+                  "label": "Select Log",
+                  "type": 2,
+                  "description": "Select a table for running predictions on.",
+                  "isRequired": true,
+                  "query": "Usage\r\n| distinct DataType",
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 2592000000
+                  },
+                  "queryType": 0,
+                  "resourceType": "microsoft.operationalinsights/workspaces",
+                  "value": "Windows365Apps_CL"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - 6"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "3150053a-2f6b-4b65-bf10-a2082ac4fa7a",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "TotalDevices",
+                  "label": "Total Organization Device Count",
+                  "type": 1,
+                  "description": "Total org size to scale up to for the prediction.",
+                  "isRequired": true,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "value": "10000"
+                },
+                {
+                  "id": "2668d96c-93ac-4c37-a69f-f7e7bc5b4022",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "Total_Endpoints",
+                  "label": "Total Endpoints",
+                  "type": 1,
+                  "description": "DO NOT EDIT THIS! This is automatically calculated by the count of unique endpoints reporting into the selected log for the selected duration.",
+                  "isRequired": true,
+                  "query": "{SelectedLog}\r\n| where TimeGenerated > ago({CostTimeRange})\r\n| distinct  ComputerName\r\n| summarize Total_Endpoints=count()",
+                  "queryType": 0,
+                  "resourceType": "microsoft.operationalinsights/workspaces"
+                },
+                {
+                  "id": "91c83b7e-29ce-4db0-8a43-14513f00ac98",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "TimeRangeNumerical",
+                  "label": "Time Range Numerical",
+                  "type": 1,
+                  "description": "DO NOT EDIT THIS! This is automatically populated and should match the cost range in days.",
+                  "isRequired": true,
+                  "query": "print datetime_diff('day',now(),now(-{CostTimeRange}))",
+                  "queryType": 0,
+                  "resourceType": "microsoft.operationalinsights/workspaces"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - 6"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "let TotalIngestion=toscalar(\r\n    Usage\r\n    | where TimeGenerated > ago ({CostTimeRange})\r\n    | summarize IngestionVolume=sum(Quantity));\r\nUsage\r\n| where TimeGenerated > ago ({CostTimeRange})\r\n| project TimeGenerated, DataType, Solution, Quantity, IsBillable\r\n| where DataType in ('{SelectedLog}')\r\n| summarize\r\n    IngestionVolumeMB=sum(Quantity),\r\n    IngestionPercent=(sum(Quantity)) / TotalIngestion,\r\n    Billable=any(IsBillable)\r\n    by Solution, DataType\r\n| sort by IngestionVolumeMB\r\n| extend MonthlyGB=(((IngestionVolumeMB/{TimeRangeNumerical})*30)/1024)\r\n| extend TotalDevices={TotalDevices}\r\n| extend CurrentDevices={Total_Endpoints}\r\n| extend MonthlyGB_Enterprise_Prediction=((MonthlyGB*TotalDevices)/CurrentDevices)\r\n| extend Monthly_Enterprise_Cost_Prediction_Dollars=(MonthlyGB_Enterprise_Prediction*({CostPerGB}))\r\n| project Solution, DataType, IngestionVolumeMB, IngestionPercent, Billable, MonthlyGB, MonthlyGB_Enterprise_Prediction, Monthly_Enterprise_Cost_Prediction_Dollars",
+              "size": 3,
+              "title": "Ingestion Amounts for Selected Range and Log",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table"
+            },
+            "name": "Cost Prediction Based on Past 7 Days"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "# Understanding the results\r\n\r\n1. DataType - This should match the Table name of the Table you ran a prediction on\r\n\r\n2. IngestionVolumeMB - This is how many Megabytes of data were ingested to this Table during the selected Cost Time Range.\r\n\r\n3. Ingestion Percent - This is what percentage of ALL ingested MB between both Windows 365 tables the selected Table is responsible for.\r\n\r\n4. Billable - Is the data that was ingested Billable? For this workbook, this will always be true.\r\n\r\n5. MonthlyGB - This is how many GB the selected Table would have ingested over the course of a full month.\r\n\r\n6. MonthlyGB_Enterprise_Prediction - This is how many GB the entire prediction value number of devices would have ingested after scaling up.\r\n\r\n7. MonthlyGB_Enterprise_Prediction_Dollars - This is the predicted cost to deploy the table to the entire organization size that you set.\r\n",
+              "style": "info"
+            },
+            "name": "text - 5"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "CostPrediction"
+      },
+      "name": "Cost Prediction",
+      "styleSettings": {
+        "showBorder": true
+      }
+    }
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
