@@ -171,7 +171,7 @@
       "apiVersion": "2015-08-01",
       "name": "[format('{0}/{1}', parameters('FunctionAppName'), 'ZipDeploy')]",
       "properties": {
-        "packageUri": "https://github.com/AzureToTheMax/DCR-Based-Custom-Log-Analytics/raw/main/Function_App/2.0/Packages/DCRLogIngestAPI.zip"
+        "packageUri": "https://github.com/AzureToTheMax/DCR-Based-Custom-Log-Analytics/raw/main/Function_App/2.1/Packages/DCRLogIngestAPI.zip"
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('FunctionAppName'))]"
