@@ -1,0 +1,480 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "<img src=\"https://azuretothemax.files.wordpress.com/2023/03/image0001.png?w=1024\" height=\"100\")>"
+      },
+      "customWidth": "15",
+      "name": "text - 12",
+      "styleSettings": {
+        "maxWidth": "15"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "\r\n# Admin Inventory V1\r\n---\r\nThis workbook is used to monitor your Windows Endpoint Environments local admin accounts. Use the below selectors to alter the viewable data Time Range and choose a tab of information to view. Only data points ingested during the selected time range will be displayed.\r\n\r\nMore information can be found at https://azuretothemax.net/log-analytics-index/\r\n\r\n\r\n",
+        "style": "info"
+      },
+      "customWidth": "85",
+      "name": "Info",
+      "styleSettings": {
+        "maxWidth": "85"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "\r\n# Devices With Local Admin Accounts Report\r\n---\r\n### This report lists devices that have unknown local admin accounts.\r\n"
+      },
+      "name": "text - 0 - Copy"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "f20700c8-40ea-4bc5-b658-90bea702d608",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time Range",
+            "type": 4,
+            "description": "Select Time Range of Data to Display",
+            "isRequired": true,
+            "value": {
+              "durationMs": 2592000000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2592000000
+                }
+              ],
+              "allowCustom": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "customWidth": "50",
+      "name": "parameters - 3"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "4d0ee788-3678-42a8-9df4-bc0325ea7de3",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Dashboard",
+            "subTarget": "Dashboard",
+            "preText": "Dashboard",
+            "postText": "",
+            "style": "link"
+          },
+          {
+            "id": "ac48d7ab-c997-494c-8531-1aa044809627",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Queries",
+            "subTarget": "Queries",
+            "style": "link"
+          },
+          {
+            "id": "07de5b60-c132-483d-89e8-60f28d1a1789",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Account Information",
+            "subTarget": "Information",
+            "style": "link"
+          },
+          {
+            "id": "85e2f1f2-7077-47c2-856f-81fe7d0f02a3",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Ingestion Information",
+            "subTarget": "IngestionInformation",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "links - 7"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Dashboard",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AdminInventory_CL\r\n| where TimeGenerated {TimeRange}\r\n| mv-expand LocalAdministrators\r\n| evaluate bag_unpack(LocalAdministrators)\r\n| where Admin  != \"S-1-12-1-XXXXXXXXXX\" //Global Administrator\r\n| where Admin  != \"S-1-12-1-YYYYYYYYYY\" //Azure AD Joined Device Local Administrator\r\n| where Admin  != \"Administrator\" //Built in Windows admin default name\r\n| where Admin  != \"defaultuser0\" //Account used during ESP / OOBE\r\n| where isnotempty (Admin)\r\n| distinct ComputerName,Admin,bin(TimeGenerated,1d)\r\n| summarize count() by bin(TimeGenerated,1d)\r\n| render areachart \r\n",
+              "size": 0,
+              "title": "Local Admin Count by Day",
+              "noDataMessage": "No Data Found for Selected Time Range",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "count_",
+                    "label": "Daily Count",
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "name": "Local Admin Count by Day"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AdminInventory_CL\r\n| where TimeGenerated {TimeRange}\r\n| mv-expand LocalAdministrators\r\n| evaluate bag_unpack(LocalAdministrators)\r\n| join kind=leftouter DeviceInventory_CL on ComputerName\r\n| where Admin  != \"S-1-12-1-XXXXXXXXXX\" //Global Administrator\r\n| where Admin  != \"S-1-12-1-YYYYYYYYYY\" //Azure AD Joined Device Local Administrator\r\n| where Admin  != \"Administrator\" //Built in Windows admin default name\r\n| where Admin  != \"defaultuser0\" //Account used during ESP / OOBE\r\n| where isnotempty (Admin)\r\n| sort by PrimaryUserUPN desc\r\n| summarize arg_max(TimeGenerated, ComputerName, tostring(Admin), PrimaryUserUPN, Model, Manufacturer, PCSystemTypeEx, SerialNumber) by tostring(Admin), ComputerName\r\n| project ComputerName, Admin, TimeOfData = (TimeGenerated), PrimaryUserUPN, PCSystemTypeEx, Manufacturer, Model, SerialNumber\r\n| sort by todatetime( TimeOfData) asc\r\n",
+              "size": 3,
+              "title": "All Admins on All Devices",
+              "noDataMessage": "No data found!",
+              "noDataMessageStyle": 5,
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "filter": true,
+                "sortBy": [
+                  {
+                    "itemKey": "TimeOfData",
+                    "sortOrder": 1
+                  }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "TimeOfData",
+                  "sortOrder": 1
+                }
+              ]
+            },
+            "name": "All Admins on All Devices"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Dashboard"
+      },
+      "name": "Dashboard",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Queries",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### Browse by device or user\r\n"
+            },
+            "name": "text - 0"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "06391095-6dbb-4b06-a2b4-c8ae6638a02a",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeviceName",
+                  "label": "Device Name",
+                  "type": 1,
+                  "description": "Select device name for filtering - can be partial",
+                  "isRequired": true,
+                  "value": "Device-Name",
+                  "timeContext": {
+                    "durationMs": 2592000000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "parameters - 3"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "a42b575c-89cb-4603-959a-140db3b6242b",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UserID",
+                  "label": "User ID",
+                  "type": 2,
+                  "description": "Select User ID to filter for",
+                  "isRequired": true,
+                  "query": "AdminInventory_CL\r\n| where TimeGenerated > ago(30d)\r\n| mv-expand LocalAdministrators\r\n| evaluate bag_unpack(LocalAdministrators)\r\n| where Admin  != \"S-1-12-1-XXXXXXXXXX\" //Global Administrator\r\n| where Admin  != \"S-1-12-1-YYYYYYYYYY\" //Azure AD Joined Device Local Administrator\r\n| where Admin  != \"Administrator\" //Built in Windows admin default name\r\n| where Admin  != \"defaultuser0\" //Account used during ESP / OOBE\r\n| where isnotempty (Admin)\r\n| distinct Admin",
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 2592000000
+                  },
+                  "queryType": 0,
+                  "resourceType": "microsoft.operationalinsights/workspaces",
+                  "value": null
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "parameters - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AdminInventory_CL\r\n| where TimeGenerated {TimeRange}\r\n| mv-expand LocalAdministrators\r\n| evaluate bag_unpack(LocalAdministrators)\r\n| join kind=leftouter DeviceInventory_CL on ComputerName\r\n| where Admin  != \"S-1-12-1-XXXXXXXXXX\" //Global Administrator\r\n| where Admin  != \"S-1-12-1-YYYYYYYYYY\" //Azure AD Joined Device Local Administrator\r\n| where Admin  != \"Administrator\" //Built in Windows admin default name\r\n| where Admin  != \"defaultuser0\" //Account used during ESP / OOBE\r\n| where isnotempty (Admin)\r\n| summarize arg_max(TimeGenerated, ComputerName, Admin, PrimaryUserUPN, Model, Manufacturer, PCSystemTypeEx, SerialNumber) by Admin, ComputerName\r\n| project ComputerName, Admin, TimeOfData = (TimeGenerated), PrimaryUserUPN, PCSystemTypeEx, Manufacturer, Model, SerialNumber\r\n| sort by ComputerName\r\n| where ComputerName contains \"{DeviceName}\"\r\n",
+              "size": 2,
+              "title": "Admins on Selected Device",
+              "noDataMessage": "No admins found for selected device!",
+              "noDataMessageStyle": 4,
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Admins on selected device"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AdminInventory_CL\r\n| where TimeGenerated {TimeRange}\r\n| mv-expand LocalAdministrators\r\n| evaluate bag_unpack(LocalAdministrators)\r\n| join kind=leftouter DeviceInventory_CL on ComputerName\r\n| where Admin  != \"S-1-12-1-XXXXXXXXXX\" //Global Administrator\r\n| where Admin  != \"S-1-12-1-YYYYYYYYYY\" //Azure AD Joined Device Local Administrator\r\n| where Admin  != \"Administrator\" //Built in Windows admin default name\r\n| where Admin  != \"defaultuser0\" //Account used during ESP / OOBE\r\n| where isnotempty (Admin)\r\n| where Admin  == \"{UserID}\"\r\n| where Admin  != \"QualysScanCred\"\r\n| summarize arg_max(TimeGenerated, ComputerName, Admin, PrimaryUserUPN, Model, Manufacturer, PCSystemTypeEx, SerialNumber) by Admin, ComputerName\r\n| project ComputerName, Admin, TimeOfData = (TimeGenerated), PrimaryUserUPN, PCSystemTypeEx, Manufacturer, Model, SerialNumber\r\n| sort by ComputerName",
+              "size": 2,
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "query - 6"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Queries"
+      },
+      "name": "Queries",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Information",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "\r\n# Known Local Admin Accounts\r\n---\r\nThis is a list of accounts ignored by this Workbook, some of which you may need to configure follownig the information here:\r\n\r\nS-1-12-1-XXXXXXXXXX - Global Administrator Role which is part of Local Admins by default\r\n\r\nS-1-12-1-YYYYYYYYYY - Azure AD Joined Device Local Administrator  which is part of Local Admins by default\r\n\r\nAdministrator - Built in Windows admin default name\r\n\r\ndefaultuser0 - The account used during ESP / OOBE\r\n\r\nFor information on these Excluded ID's and SID's, see the below links."
+            },
+            "name": "text - 0"
+          },
+          {
+            "type": 11,
+            "content": {
+              "version": "LinkItem/1.0",
+              "style": "bullets",
+              "links": [
+                {
+                  "id": "6e5ce111-ab90-4429-ba10-0727924cfb19",
+                  "cellValue": "https://docs.microsoft.com/en-us/windows/security/identity-protection/access-control/security-identifiers",
+                  "linkTarget": "Url",
+                  "linkLabel": "Common SID's",
+                  "style": "link"
+                },
+                {
+                  "id": "ea917750-14b9-4958-95af-a88b8a07df96",
+                  "cellValue": "https://docs.microsoft.com/en-us/azure/active-directory/devices/assign-local-admin",
+                  "linkTarget": "Url",
+                  "linkLabel": "Azure SID's",
+                  "style": "link"
+                },
+                {
+                  "id": "e731f7c4-4f5f-4657-adfd-57cbe81b5cc0",
+                  "cellValue": "https://oliverkieselbach.com/2020/05/13/powershell-helpers-to-convert-azure-ad-object-ids-and-sids/",
+                  "linkTarget": "Url",
+                  "linkLabel": "Convert SID to Azure Object ID",
+                  "style": "link"
+                }
+              ]
+            },
+            "name": "links - 1"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Information"
+      },
+      "name": "Information",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Ingestion Information",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AdminInventory_CL \r\n| where TimeGenerated {TimeRange}\r\n| summarize arg_max(TimeGenerated, *) by ComputerName, ScriptVersion\r\n| summarize Total_Endpoints=count() by ScriptVersion\r\n",
+              "size": 0,
+              "showAnalytics": true,
+              "title": "Count of Devices in Time Range",
+              "noDataMessage": "No devices found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "labelSettings": [
+                  {
+                    "columnId": "Total_Endpoints",
+                    "label": "Total Endpoints",
+                    "comment": "Total Endpoints in Selected Range"
+                  }
+                ]
+              }
+            },
+            "customWidth": "20",
+            "name": "Count of Devices in Time Range",
+            "styleSettings": {
+              "maxWidth": "20"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AdminInventory_CL \r\n| where TimeGenerated{TimeRange}\r\n| distinct TimeGenerated,ComputerName\r\n| summarize count() by bin(TimeGenerated,6h)\r\n| render timechart",
+              "size": 1,
+              "title": "Summary of Event Ingestion for Selected Time Range (6H)",
+              "noDataMessage": "No data was found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "40",
+            "name": "Summary of App Data Ingestion for Past Week",
+            "styleSettings": {
+              "maxWidth": "40"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AdminInventory_CL \r\n| where todatetime(TimeGenerated) {TimeRange}\r\n| summarize count() by ComputerName, bin((TimeGenerated), 1h)\r\n| sort by count_\r\n| render scatterchart \r\n",
+              "size": 0,
+              "showAnalytics": true,
+              "title": "Summary of Event Ingestion for Selected Time Range by Computer (1H)",
+              "noDataMessage": "No Data found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "40",
+            "name": "Summary of Event Ingestion for Selected Time Range by Computer (1H)",
+            "styleSettings": {
+              "maxWidth": "40"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "IngestionInformation"
+      },
+      "name": "Ingestion Information",
+      "styleSettings": {
+        "showBorder": true
+      }
+    }
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
