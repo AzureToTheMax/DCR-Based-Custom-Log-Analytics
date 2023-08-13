@@ -1,0 +1,1046 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "<img src=\"https://azuretothemax.files.wordpress.com/2023/03/image0001.png?w=1024\" height=\"100\")>"
+      },
+      "customWidth": "15",
+      "name": "text - 12",
+      "styleSettings": {
+        "maxWidth": "15"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "\r\n# App Inventory V1\r\n---\r\nThis workbook is used to monitor your Windows Endpoint Environments Application Inventory. Use the below selectors to alter the viewable data Time Range and choose a tab of information to view. Only data points ingested during the selected time range will be displayed.\r\n\r\nMore information can be found at https://azuretothemax.net/log-analytics-index/\r\n\r\n\r\n",
+        "style": "info"
+      },
+      "customWidth": "85",
+      "name": "Info",
+      "styleSettings": {
+        "maxWidth": "85"
+      }
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "f20700c8-40ea-4bc5-b658-90bea702d608",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time Range",
+            "type": 4,
+            "description": "Select Time Range of Data to Display",
+            "isRequired": true,
+            "value": {
+              "durationMs": 1209600000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2592000000
+                }
+              ],
+              "allowCustom": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "customWidth": "50",
+      "name": "parameters - 3"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "4d0ee788-3678-42a8-9df4-bc0325ea7de3",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Dashboard",
+            "subTarget": "Dashboard",
+            "preText": "Dashboard",
+            "postText": "",
+            "style": "link"
+          },
+          {
+            "id": "ac48d7ab-c997-494c-8531-1aa044809627",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Queries",
+            "subTarget": "Queries",
+            "style": "link"
+          },
+          {
+            "id": "263310f6-94dd-46f2-b13f-bd70d2b96ae5",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Office 365",
+            "subTarget": "Office365",
+            "style": "link"
+          },
+          {
+            "id": "b50f98f4-3f08-4538-95db-ae0e25f4143b",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Patch My PC",
+            "subTarget": "PatchMyPC",
+            "style": "link"
+          },
+          {
+            "id": "07de5b60-c132-483d-89e8-60f28d1a1789",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Ingestion Information",
+            "subTarget": "IngestionInformation",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "links - 7"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Dashboard",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| project TimeGenerated, ComputerName, ScriptVersion, ManagedDeviceID, ManagedDeviceName, AppName, AppVersion, AppPublisher, AppUninstallRegPath, AppUninstallString\r\n| sort by ComputerName, AppName asc\r\n| summarize Count=count() by AppName\r\n| sort by Count, AppName",
+              "size": 3,
+              "title": "Count of Total App Installs by AppName",
+              "noDataMessage": "No data found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "gridSettings": {
+                "filter": true
+              }
+            },
+            "name": "Count of Total App Installs by AppName"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Dashboard"
+      },
+      "name": "Dashboard",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Queries",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "## Specific Application Searches\r\n---\r\nUse the below queries to search for specific applications. You do not need the full / exact application or device name; partial names are okay.\r\n\r\n---\r\n\r\n### List: Versions of Searched App on All machines\r\nThis is an exportable list of all found applications broken up by name, version and count.\r\n\r\n---\r\n\r\n### Chart: Versions of Searched App on All machines\r\nThis shows the same information as the above but broken out into a pie chart for quick assessments of patching. You can hover over a section to see what percentage it represents.\r\n\r\n---\r\n\r\n### List: Versions of Searched App on All machines\r\nThis is an exportable list of all found applications broken down into a granular per-device/app view. If you are after the raw granular data, this is probably what you want.\r\n\r\n---\r\n\r\n### Graph: Install Counts by Day of Searched App\r\nThis graph charts a daily count of all found applications by version. So, with this graph, you can watch updates roll out as the prior version will subside in count while the new version grows. This is great for both monitoring that patches are going out, as well as quickly answer the question of “could this problem we are seeing be caused by a patch.” Due to the one-day summary nature, the start and end of this graph will often have values which appear low.\r\n\r\n\r\n",
+              "style": "info"
+            },
+            "name": "text - 5"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "976f0411-044f-4d17-b4da-b5f92c509351",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "SoftwareSearchName",
+                  "label": "Software Search Name",
+                  "type": 1,
+                  "description": "Select software to search for",
+                  "isRequired": true,
+                  "value": "Teams",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - 6"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| project TimeGenerated, ComputerName, ScriptVersion, ManagedDeviceID, ManagedDeviceName, AppName, AppVersion, AppPublisher, AppUninstallRegPath, AppUninstallString\r\n| where AppName contains \"{SoftwareSearchName}\"\r\n| summarize Count=count() by AppName, AppVersion\r\n| sort by Count",
+              "size": 0,
+              "title": "List: Versions of Searched App on All machines",
+              "noDataMessage": "No data found for selected time range and/or AppName!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "sortBy": [
+                  {
+                    "itemKey": "Count",
+                    "sortOrder": 2
+                  }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "Count",
+                  "sortOrder": 2
+                }
+              ]
+            },
+            "customWidth": "50",
+            "name": "List: Versions of Searched App on All machines"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| project TimeGenerated, ComputerName, ScriptVersion, ManagedDeviceID, ManagedDeviceName, AppName, AppVersion, AppPublisher, AppUninstallRegPath, AppUninstallString\r\n| where AppName contains \"{SoftwareSearchName}\"\r\n| summarize Count=count() by AppName, AppVersion\r\n| render piechart",
+              "size": 0,
+              "title": "Chart: Versions of Searched App on All machines",
+              "noDataMessage": "No data found for selected time range and/or AppName!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "AppVersion",
+                "createOtherGroup": 50
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart: Versions of Searched App on All machines"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName contains \"{SoftwareSearchName}\"\r\n| project TimeGenerated, ComputerName, ScriptVersion, ManagedDeviceID, ManagedDeviceName, AppName, AppVersion, AppInstallDate, AppPublisher, AppUninstallRegPath, AppUninstallString\r\n| sort by AppVersion",
+              "size": 0,
+              "title": "List: App Details by Searched App",
+              "noDataMessage": "No data found for searched software and/or time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "filter": true
+              },
+              "sortBy": []
+            },
+            "customWidth": "100",
+            "name": "List: App Details by Searched App",
+            "styleSettings": {
+              "maxWidth": "100"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName, bin(TimeGenerated,1d)\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName contains \"{SoftwareSearchName}\"\r\n| summarize count() by AppVersion, bin(TimeGenerated,1d)\r\n| render areachart",
+              "size": 0,
+              "title": "Graph: Install Counts by Day of Searched App",
+              "noDataMessage": "No data found for selected time range / app!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "100",
+            "name": "Graph: Install Counts by Day of Searched App",
+            "styleSettings": {
+              "maxWidth": "100"
+            }
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "# Machine Searches\r\nUse the below queries to search for specific applications on a specific machine(s) or, all applications on a machine. You do not need the full / exact application or device name; partial names are okay.\r\n\r\n---\r\n\r\n### Machine Search Results\r\nThis shows the found machines (Computer Names) based on your search. This is simply used to determine a machine(s) was found and if so, what machine(s). This is important as you may search a machine in combination with a piece of software, one of which may not exist, and this helps you determine which (the machine or the software) that is.\r\n\r\n---\r\n\r\n### List: All Versions of Searched App on Only Searched Machine(s)\r\nRather self-explanatory, this shows you the searched app (at the top) as it appears only on the searched machine(s). \r\n\r\n---\r\n\r\n### Chart: All Versions of Searched App on Only Searched Machine(s)\r\nSame as the above in pie chart form.\r\n\r\n---\r\n\r\n### List: All Software on Searched Machine(s)\r\nThis provides you with a list of all currently preset (as of last data point) software on the searched machine(s).\r\n",
+              "style": "info"
+            },
+            "name": "text - 9"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "693c64c7-1532-4e52-8797-eea627e366f8",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeviceSearchName",
+                  "label": "Device Search Name",
+                  "type": 1,
+                  "description": "Device to Search For",
+                  "isRequired": true,
+                  "value": "Device Name",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - 6 - Copy"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---"
+            },
+            "name": "text - 9 - Copy"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where ComputerName contains \"{DeviceSearchName}\"\r\n| distinct ComputerName\r\n| sort by ComputerName\r\n",
+              "size": 1,
+              "title": "Machine Search Results",
+              "noDataMessage": "No machines found in search!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table"
+            },
+            "customWidth": "33",
+            "name": "List: Machines Found by Search",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| project TimeGenerated, ComputerName, ScriptVersion, ManagedDeviceID, ManagedDeviceName, AppName, AppVersion, AppPublisher, AppUninstallRegPath, AppUninstallString, AppInstallDate\r\n| where AppName contains \"{SoftwareSearchName}\"\r\n| where ComputerName contains \"{DeviceSearchName}\"\r\n| project TimeGenerated, ComputerName, AppName, AppVersion, AppInstallDate, AppPublisher, AppUninstallRegPath, AppUninstallString\r\n",
+              "size": 0,
+              "title": "List: All Versions of Searched App on Only Searched Machine(s)",
+              "noDataMessage": "No data found for selected time range, software name, or machine name!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table"
+            },
+            "customWidth": "33",
+            "name": "List: All Versions of Searched App on Only Searched Machine(s)",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| project TimeGenerated, ComputerName, ScriptVersion, ManagedDeviceID, ManagedDeviceName, AppName, AppVersion, AppPublisher, AppUninstallRegPath, AppUninstallString\r\n// query goes here\r\n| where AppName contains \"{SoftwareSearchName}\"\r\n| where ComputerName contains \"{DeviceSearchName}\"\r\n| summarize count() by AppName, AppVersion\r\n| sort by count_\r\n| render piechart",
+              "size": 0,
+              "title": "Chart: All Versions of Searched App on Only Searched Machine(s)",
+              "noDataMessage": "No data found for selected time range, software name, or machine name!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "AppName",
+                "createOtherGroup": 50
+              }
+            },
+            "customWidth": "33",
+            "name": "query - 9",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---"
+            },
+            "name": "text - 9 - Copy"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| project TimeGenerated, ComputerName, ScriptVersion, ManagedDeviceID, ManagedDeviceName, AppName, AppVersion, AppPublisher, AppUninstallRegPath, AppUninstallString, AppInstallDate\r\n// query goes here\r\n| where ComputerName contains \"{DeviceSearchName}\"\r\n| project TimeGenerated, ComputerName, AppName, AppVersion, AppInstallDate, AppUninstallRegPath\r\n| sort by AppName asc",
+              "size": 0,
+              "title": "List: All Software on Searched Machine(s)",
+              "noDataMessage": "No data found for selected Machine(S) or date range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "filter": true
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 8"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Queries"
+      },
+      "name": "Queries",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Office 365",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Office 365\r\n---\r\nInformation on Office 365 versioning.\r\nOffice 365 versions are based on the \"Office 16 Click-to-Run Extensibility Component\" app version."
+            },
+            "name": "text - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName contains \"Microsoft 365 Apps for enterprise - en-u\"\r\n| summarize count() by AppName, AppVersion\r\n| sort by count_",
+              "size": 0,
+              "title": "List: Count by office Version",
+              "noDataMessage": "No Data Found in Selected Time Range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "List: Count by Office Version"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName contains \"Microsoft 365 Apps for enterprise - en-u\"\r\n| summarize count() by AppName, AppVersion\r\n| render piechart",
+              "size": 0,
+              "title": "Chart: Count by Office Version",
+              "noDataMessage": "No Data Found in Selected Time Range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "AppVersion",
+                "createOtherGroup": 50
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart: Count by office Version"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName contains \"Microsoft 365 Apps for enterprise - en-u\"\r\n| project TimeGenerated, ComputerName, AppName, AppVersion, AppInstallDate, AppPublisher, AppUninstallString, AppUninstallRegPath\r\n| sort by AppVersion\r\n| render list",
+              "size": 0,
+              "title": "List: Most Recent Office 365 Version from Each Machine",
+              "noDataMessage": "No data found for searched software and/or time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "filter": true
+              },
+              "sortBy": []
+            },
+            "name": "List: Most Recent Office 365 Version from Each Machine"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName == \"Office 16 Click-to-Run Extensibility Component\"\r\n| where AppUninstallRegPath contains \"WOW6432Node\"\r\n| project TimeGenerated, ComputerName, AppName, AppVersion, AppInstallDate, AppUninstallRegPath\r\n| render list",
+              "size": 0,
+              "title": "List: Office 365 32-Bit Devices",
+              "noDataMessage": "No data found in selected time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "filter": true
+              }
+            },
+            "customWidth": "50",
+            "name": "List: Office 365 32-Bit Devices",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName == \"Office 16 Click-to-Run Extensibility Component\"\r\n| summarize 64Bit = countif(AppUninstallRegPath !contains \"WOW6432Node\"), 32bit = countif(AppUninstallRegPath contains \"WOW6432Node\")\r\n| extend Result = pack(\"64-Bit\", 64Bit, \"32-bit\", 32bit)\r\n| mvexpand kind = array Result\r\n| project Result = tostring(Result[0]), Value = toint(Result[1])\r\n| render piechart",
+              "size": 0,
+              "title": "Chart: Office 365 32/64-Bit",
+              "noDataMessage": "No data found in selected time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "filter": true
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart: Office 365 32/64-Bit",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName, bin(TimeGenerated,1d)\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName == \"Office 16 Click-to-Run Extensibility Component\"\r\n| summarize 64Bit = countif(AppUninstallRegPath !contains \"WOW6432Node\"), 32bit = countif(AppUninstallRegPath contains \"WOW6432Node\") by bin(TimeGenerated,1d)\r\n| project 32bit, 64Bit, TimeGenerated\r\n| render areachart",
+              "size": 0,
+              "title": "Chart: Office 365 32-Bit/64-Bit Daily",
+              "noDataMessage": "No data!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "32bit",
+                    "color": "red"
+                  },
+                  {
+                    "seriesName": "64Bit",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart: Office 365 32-Bit/64-Bit Daily",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "12cbd0c4-6b82-453f-a229-3d2fd75f25e3",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "MachineName",
+                  "label": "Machine Name",
+                  "type": 1,
+                  "description": "Set device to filter for 64/32 Bit",
+                  "value": "Device Name",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - 12"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName == \"Office 16 Click-to-Run Extensibility Component\"\r\n| where ComputerName contains \"{MachineName}\"\r\n| project TimeGenerated, ComputerName, AppName, AppVersion, AppInstallDate, AppPublisher, AppUninstallRegPath, AppUninstallString",
+              "size": 0,
+              "title": "Chart: Office 365 Details - Searched PC",
+              "noDataMessage": "No data!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "32bit",
+                    "color": "red"
+                  },
+                  {
+                    "seriesName": "64Bit",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart: Office 365 Details - Searched PC",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName == \"Office 16 Click-to-Run Extensibility Component\"\r\n| where ComputerName contains \"{MachineName}\"\r\n| summarize 64Bit = countif(AppUninstallRegPath !contains \"WOW6432Node\"), 32bit = countif(AppUninstallRegPath contains \"WOW6432Node\") by bin(TimeGenerated,1d)\r\n| project 32bit, 64Bit, TimeGenerated\r\n| render areachart",
+              "size": 0,
+              "title": "Chart: Office 365 32-Bit/64-Bit Daily - Searched PC",
+              "noDataMessage": "No data!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "32bit",
+                    "color": "red"
+                  },
+                  {
+                    "seriesName": "64Bit",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart: Office 365 32-Bit/64-Bit Daily",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\r\n# Microsoft Teams\r\nResults are based on the app name \"Microsoft Teams.\""
+            },
+            "name": "text - 9"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---"
+            },
+            "name": "text - 9 - Copy"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName contains \"Microsoft Teams\"\r\n| summarize count() by AppName, AppVersion\r\n| sort by count_",
+              "size": 0,
+              "title": "List: Count by Teams Version",
+              "noDataMessage": "No Data Found in Selected Time Range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "List: Count by Teams Version"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName contains \"Microsoft Teams\"\r\n| summarize count() by AppName, AppVersion\r\n| render piechart",
+              "size": 0,
+              "title": "Chart: Count by Teams Version",
+              "noDataMessage": "No Data Found in Selected Time Range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "AppVersion",
+                "createOtherGroup": 50
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart: Count by Teams Version"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName contains \"Microsoft Teams\"\r\n| project TimeGenerated, ComputerName, AppName, AppVersion, AppInstallDate, AppPublisher, AppUninstallString, AppUninstallRegPath\r\n| sort by AppVersion, TimeGenerated",
+              "size": 0,
+              "title": "List: Most Recent Office 365 Version from Each Machine",
+              "noDataMessage": "No data found for searched software and/or time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "filter": true
+              },
+              "sortBy": []
+            },
+            "name": "List: Most Recent Teams Version from Each Machine"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\r\n# Microsoft Teams on CPC"
+            },
+            "name": "text - 15"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName, bin(TimeGenerated,1d)\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName contains \"Microsoft Teams\"\r\n| where ComputerName contains \"CPC-\"\r\n| summarize Count=count() by AppVersion, bin(TimeGenerated,1d)\r\n| render timechart ",
+              "size": 0,
+              "title": "\"Microsoft Teams\" on CPC",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "\"Microsoft Teams\" on CPC",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName contains \"Microsoft Teams\"\r\n| where ComputerName contains \"CPC-\"\r\n| project TimeGenerated, ComputerName, AppName, AppVersion, AppInstallDate, AppPublisher, AppUninstallRegPath\r\n| sort by AppVersion, TimeGenerated\r\n",
+              "size": 0,
+              "title": "\"Microsoft Teams\" on CPC",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "\"Microsoft Teams\" on CPC",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Office365"
+      },
+      "name": "Office 365",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Patch My PC",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Patch My PC\r\n---\r\nInformation regarding various apps which are updated via Patch my PC.\r\n\r\n## Query Info\r\nBe aware that ALL of the below queries will sort for ONLY the most recent reported version of an app from a machine by that app name. So, an app which has a static name like \"Google Chrome\" will only return the most recent report from a machine, including information about when that report was received (time generated).\r\n\r\nSome apps like 7-Zip change there name based on version, and thus they return as seperate options in the drop down and will have to be evaluated seperately. \r\n\r\n### Chart: App Version Count\r\nPie-Chart breakdown of the app versions - showing most recent version of the selected app using data from the selected time range.\r\n\r\n### List: Full Exportable Data for Selected App\r\nExportable list of the app versions - showing most recent version of the selected app using data from the selected time range. This exportable list will show data for all devices which have that app installed, as well as detailed information about the app and device.\r\n\r\nIf looking for infomration on a specific device, expor this list as a CSV.\r\n\r\n### Chart: App Version Count over Time (1D)\r\nTime-Chart breakdown of the app versions - showing most recent version of the selected app using data from the selected time range. However, this is broken down by day. So, it's whatever the most recent version of the app the device reported on a given day. Data is only displayed on a day if a device truly reported having that version of the app on that day, and it was the highest version it reported that whole day. \r\n\r\nThis allows the visualization of updates that are going out.\r\n",
+              "style": "info"
+            },
+            "name": "text - 5"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "8ba073c3-7810-4243-82d3-e3cf1c422ee1",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "SelectedApp",
+                  "label": "Selected App",
+                  "type": 2,
+                  "description": "Chosing a Patch my PC app to display",
+                  "isRequired": true,
+                  "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| summarize any(TimeGenerated) by AppName\r\n| project AppName\r\n| where AppName == \"Google Chrome\" or AppName has \"7-Zip\" or AppName has \"Zoom\" or AppName == \"VLC media player\" or AppName == \"DisplayLink Graphics\" or AppName has \"Remote Desktop WebRTC\" or AppName has \"Firefox\"\r\n| sort by AppName asc",
+                  "typeSettings": {
+                    "additionalResourceOptions": [],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 2592000000
+                  },
+                  "queryType": 0,
+                  "resourceType": "microsoft.operationalinsights/workspaces",
+                  "value": "7-Zip 21.07 (x64 edition)"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - 7"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName == \"{SelectedApp}\"\r\n| summarize count() by AppVersion\r\n| render piechart",
+              "size": 0,
+              "title": "Chart: App Version Count",
+              "noDataMessage": "No data found for selected app in selected time range!!!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "AppVersion",
+                "createOtherGroup": 50
+              }
+            },
+            "customWidth": "33",
+            "name": "Chart: App Version Count",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName == \"{SelectedApp}\"\r\n| project TimeGenerated, ComputerName, AppName, AppVersion, AppInstallDate, AppPublisher, AppUninstallString, AppUninstallRegPath\r\n| sort by AppVersion\r\n| render list",
+              "size": 0,
+              "title": "List: Full Exportable Data for Selected App",
+              "noDataMessage": "No data found for selected app in selected time range!!!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "filter": true
+              },
+              "sortBy": []
+            },
+            "customWidth": "66",
+            "name": "List: Full Exportable Data for Selected App",
+            "styleSettings": {
+              "maxWidth": "66"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "\r\n// Pull our most recent check in time for every machine, then pull the UploadGUID of that time along with the name of the machine\r\nlet MostRecentCheckin = AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName, bin(TimeGenerated,1d)\r\n| project UploadGUID, ComputerName, TimeGenerated;\r\n// pull all results where the UploadGUID and comptuer name match that of the above query, thus we get all but only the most recent reports per machine\r\nAppInventory_CL\r\n| join kind=inner MostRecentCheckin on $left.UploadGUID == $right.UploadGUID and $left.ComputerName == $right.ComputerName\r\n// Query goes here\r\n| where AppName == \"{SelectedApp}\"\r\n| summarize Count=count() by AppVersion, bin(TimeGenerated,1d)\r\n| render timechart ",
+              "size": 0,
+              "title": "Chart: App Version Count over Time (1D)",
+              "noDataMessage": "No data found for selected app in selected time range!!!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "32bit",
+                    "color": "red"
+                  },
+                  {
+                    "seriesName": "64Bit",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "name": "Chart: App Version Count over Time (1D)"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "PatchMyPC"
+      },
+      "name": "Patch My PC",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Ingestion Information",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppInventory_CL \r\n| where TimeGenerated {TimeRange}\r\n| summarize arg_max(TimeGenerated, *) by ComputerName, ScriptVersion\r\n| summarize Total_Endpoints=count() by ScriptVersion\r\n",
+              "size": 0,
+              "showAnalytics": true,
+              "title": "Count of Devices in Time Range",
+              "noDataMessage": "No devices found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "labelSettings": [
+                  {
+                    "columnId": "Total_Endpoints",
+                    "label": "Total Endpoints",
+                    "comment": "Total Endpoints in Selected Range"
+                  }
+                ]
+              }
+            },
+            "customWidth": "20",
+            "name": "Count of Devices in Time Range",
+            "styleSettings": {
+              "maxWidth": "20"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| distinct TimeGenerated,ComputerName\r\n| summarize count() by bin(TimeGenerated,6h)\r\n| render timechart",
+              "size": 1,
+              "title": "Summary of Event Ingestion for Selected Time Range (6H)",
+              "noDataMessage": "No data was found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "40",
+            "name": "Summary of App Data Ingestion for Past Week",
+            "styleSettings": {
+              "maxWidth": "40"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppInventory_CL \r\n| where todatetime(TimeGenerated) {TimeRange}\r\n| summarize count() by ComputerName, bin((TimeGenerated), 1h)\r\n| sort by count_\r\n| render scatterchart \r\n",
+              "size": 0,
+              "showAnalytics": true,
+              "title": "Summary of Event Ingestion for Selected Time Range by Computer (1H)",
+              "noDataMessage": "No Data found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "40",
+            "name": "Summary of Event Ingestion for Selected Time Range by Computer (1H)",
+            "styleSettings": {
+              "maxWidth": "40"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "IngestionInformation"
+      },
+      "name": "Ingestion Information",
+      "styleSettings": {
+        "showBorder": true
+      }
+    }
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
