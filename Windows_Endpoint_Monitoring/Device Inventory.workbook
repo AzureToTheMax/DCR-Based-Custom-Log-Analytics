@@ -528,9 +528,6 @@
               "title": "Last Known Device IP(s)",
               "noDataMessage": "No data found for selected device in selected time range!",
               "noDataMessageStyle": 4,
-              "timeContext": {
-                "durationMs": 86400000
-              },
               "showRefreshButton": true,
               "showExportToExcel": true,
               "queryType": 0,
