@@ -579,7 +579,7 @@ function Get-EventCollectionTimeRange {
                 #At this point the difference has been calculated either via the range or failed and it's using our max range.
 
                 #pull out our values for logging and comparison
-                $Minutes = $Difference.Minutes
+                $Minutes = $Difference.TotalMinutes
                 $DifferenceMiliseconds = $Difference.TotalMilliseconds
                 $DifferenceMiliseconds = [math]::Round($DifferenceMiliseconds)
 
