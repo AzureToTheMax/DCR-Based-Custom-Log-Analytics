@@ -1,0 +1,1114 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "<img src=\"https://azuretothemax.files.wordpress.com/2023/03/image0001.png?w=1024\" height=\"100\")>"
+      },
+      "customWidth": "15",
+      "name": "text - 12",
+      "styleSettings": {
+        "maxWidth": "15"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "\r\n# System Usage V1\r\n---\r\nThis workbook is used to monitor your Windows Endpoint Environments System Usage. Use the below selectors to alter the viewable data Time Range and choose a tab of information to view. Only data points ingested during the selected time range will be displayed.\r\n\r\nMore information can be found at https://azuretothemax.net/log-analytics-index/\r\n\r\n\r\n",
+        "style": "info"
+      },
+      "customWidth": "85",
+      "name": "Info",
+      "styleSettings": {
+        "maxWidth": "85"
+      }
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "51251626-76fd-4cd9-abfc-37543b67238e",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time Range",
+            "type": 4,
+            "description": "Select time range for export",
+            "isRequired": true,
+            "value": {
+              "durationMs": 2592000000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 300000
+                },
+                {
+                  "durationMs": 900000
+                },
+                {
+                  "durationMs": 1800000
+                },
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2419200000
+                },
+                {
+                  "durationMs": 2592000000
+                }
+              ],
+              "allowCustom": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          },
+          {
+            "id": "583ac635-3152-45d0-97f2-51b4e576abea",
+            "version": "KqlParameterItem/1.0",
+            "name": "TopCount",
+            "label": "Top X Count",
+            "type": 2,
+            "description": "Used to control the number of Top X items displayed on the pie charts of the Dashboard.",
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false
+            },
+            "jsonData": "[\r\n    \"5\",\r\n    \"10\",\r\n    \"15\",\r\n    \"20\",\r\n    \"25\",\r\n    \"30\",\r\n    \"40\",\r\n    \"50\"\r\n]",
+            "value": "20"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters - 3"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "3106cf47-8d04-4885-9346-d3b5e84288cc",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Dashboard",
+            "subTarget": "Dashboard",
+            "style": "link"
+          },
+          {
+            "id": "4d0ee788-3678-42a8-9df4-bc0325ea7de3",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Events Export",
+            "subTarget": "EventsExport",
+            "preText": "Dashboard",
+            "postText": "",
+            "style": "link"
+          },
+          {
+            "id": "ac48d7ab-c997-494c-8531-1aa044809627",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Queries",
+            "subTarget": "Queries",
+            "style": "link"
+          },
+          {
+            "id": "df7b2d55-fe22-4578-b771-f4dd46756d99",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Extra Events",
+            "subTarget": "ExtraEvents",
+            "style": "link"
+          },
+          {
+            "id": "07de5b60-c132-483d-89e8-60f28d1a1789",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Ingestion Information",
+            "subTarget": "IngestionInformation",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "links - 7"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Dashboard",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Logon Failures\r\n\r\n---\r\n\r\n## Query Info\r\n\r\n---\r\n\r\n### Logon Failures grouped by Type & 10 minutes\r\nThis graph shows a count of all logon failures occurring grouped by 10-minute intervals. This is for trend monitoring. \r\n\r\n---\r\n\r\n### Logon Failures grouped by Failure Reason & 10 minutes\r\nThis graph shows a count of login failures grouped by both the failure code and 10-minute intervals. This is for trend monitoring.\r\n\r\n---\r\n\r\n### Top {TopCount} Failed Logons by Remote IP\r\nThis pie chart counts all login failures by remote IP (the machine being authenticated from) and then displays the Top {TopCount} offenders. Note that not all remote authentication events will be able to obtain an IP and thus will not be displayed here.\r\n\r\n---\r\n\r\n### Top {TopCount} Failed Logons by Remote Machine\r\nThis pie chart counts all login failures by remote machine name (the machine being authenticated from) and then displays the Top {TopCount} offenders. Note that not all remote authentication events will be able to obtain a machine name and thus will not be displayed here.\r\n\r\n---\r\n\r\n### Top {TopCount} Failed Logons by Account\r\nThis pie chart counts all login failures by the username attempted and then displays the top {TopCount} offenders. Note that sometimes a username may not be logged on failure.  \r\n\r\n---\r\n\r\n### Top {TopCount} Failed Logons by Local Computer\r\nThis pie chart counts all login failures by local machine name (the machine being authenticated to) and then displays the top {TopCount} offenders.\r\n\r\n---\r\n\r\n### Top {TopCount} Failure Reasons for Failed Logons\r\nThis pie chart counts all login failures by the failure reason code. If a raw code ever shows up, see my site for information. \r\n\r\n\r\n\r\n",
+              "style": "info"
+            },
+            "name": "text - 9"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"Logon Failure\"\r\n| summarize count() by LogonType, bin(todatetime(TimeOfLogUTC), 10m)\r\n| render areachart \r\n",
+              "size": 0,
+              "title": "Logon Failures grouped by Type & 10 minutes",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "count_",
+                    "label": "Count of disconnects by 10 minutes",
+                    "color": "redBright"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Logon Failures grouped by Type & 10 minutes",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"Logon Failure\"\r\n| extend ExtendedInformation_Expanded = todynamic(ExtendedInformation)\r\n| mv-expand ExtendedInformation_Expanded\r\n| evaluate bag_unpack(ExtendedInformation_Expanded)\r\n| where FailureReason != \"\"\r\n| extend \r\n    FailureReason = iff(FailureReason == \"c000006e\", \"Account currently disabled\", FailureReason )\r\n| summarize Count=count() by FailureReason, bin(todatetime(TimeOfLogUTC), 10m)\r\n| render areachart\r\n\r\n",
+              "size": 0,
+              "title": "Logon Failures grouped by Failure Reason & 10 minutes",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "count_",
+                    "label": "Count of disconnects by 10 minutes",
+                    "color": "redBright"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Logon Failures grouped by Failure Reason & 10 minutes",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"Logon Failure\"\r\n| extend ExtendedInformation_Expanded = todynamic(ExtendedInformation)\r\n| mv-expand ExtendedInformation_Expanded\r\n| evaluate bag_unpack(ExtendedInformation_Expanded)\r\n| where FarMachineIP != \"-\" and FarMachineIP != \"::1\" and FarMachineIP != \"127.0.0.1\"\r\n| summarize Count=count() by FarMachineIP\r\n| sort by Count desc\r\n| take {TopCount}\r\n| render piechart ",
+              "size": 0,
+              "title": "Top {TopCount} Failed Logons by Remote IP",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "FarMachineIP",
+                "createOtherGroup": 25
+              }
+            },
+            "customWidth": "33",
+            "name": "Top {TopCount} Failed Logons by Remote IP",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"Logon Failure\"\r\n| extend ExtendedInformation_Expanded = todynamic(ExtendedInformation)\r\n| mv-expand ExtendedInformation_Expanded\r\n| evaluate bag_unpack(ExtendedInformation_Expanded)\r\n| where FarMachineName != ComputerName\r\n| summarize Count=count() by FarMachineName\r\n| sort by Count desc\r\n| take {TopCount}\r\n| render piechart ",
+              "size": 0,
+              "title": "Top {TopCount} Failed Logons by Remote Machine",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "FarMachineName",
+                "createOtherGroup": 25
+              }
+            },
+            "customWidth": "33",
+            "name": "Top {TopCount} Failed Logons by Remote Machine",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"Logon Failure\"\r\n| summarize Count=count() by User\r\n| sort by Count desc\r\n| take {TopCount}\r\n| render piechart ",
+              "size": 0,
+              "title": "Top {TopCount} Failed Logons by Account",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "User",
+                "createOtherGroup": 25
+              }
+            },
+            "customWidth": "33",
+            "name": "Top {TopCount} Failed Logons by Account",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"Logon Failure\"\r\n| summarize Count=count() by ComputerName\r\n| sort by Count desc\r\n| take {TopCount}\r\n| render piechart ",
+              "size": 0,
+              "title": "Top {TopCount} Failed Logons by Local Computer",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "ComputerName",
+                "createOtherGroup": 25
+              }
+            },
+            "customWidth": "33",
+            "name": "Top {TopCount} Failed Logons by Local Computer",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"Logon Failure\"\r\n| extend ExtendedInformation_Expanded = todynamic(ExtendedInformation)\r\n| mv-expand ExtendedInformation_Expanded\r\n| evaluate bag_unpack(ExtendedInformation_Expanded)\r\n| where FailureReason != \"\"\r\n| extend \r\n    FailureReason = iff(FailureReason == \"c000006e\", \"Account currently disabled\", FailureReason )\r\n| summarize Count=count() by FailureReason\r\n| sort by Count desc\r\n| take {TopCount}\r\n| render piechart\r\n\r\n",
+              "size": 0,
+              "title": "Top {TopCount} Failure Reasons for Failed Logons",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "FailureReason",
+                "createOtherGroup": 25
+              }
+            },
+            "customWidth": "33",
+            "name": "Top {TopCount} Failure Reasons for Failed Logons",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---"
+            },
+            "name": "text - 6"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "# Logon Success\r\n\r\n---\r\n\r\n## Query Info\r\n\r\n---\r\n\r\n### Logon Successes grouped by Type & 10 minutes\r\nThis graph shows a count of all logon successes occurring grouped by 10-minute intervals. This is for trend monitoring. \r\n\r\n---\r\n\r\n### Top {TopCount} Logon Successes Grouped by Account\r\nThis pie chart counts all login successes by account and then displays the top {TopCount} accounts.\r\n\r\n---\r\n\r\n### Top {TopCount} Logon Successes Grouped by Computer\r\nThis pie chart counts all login successes by the local machine (the station the authentication event happened on) and then displays the top {TopCount} accounts.\r\n\r\n---\r\n\r\n### Top {TopCount} Logon Successes Grouped by Remote IP\r\nThis pie chart counts all login successes by the Remote IP (the station the authentication event came from) and then displays the top {TopCount} accounts.\r\n",
+              "style": "info"
+            },
+            "name": "text - 9"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"Logon\"\r\n| summarize count() by LogonType, bin(todatetime(TimeOfLogUTC), 10m)\r\n| render areachart \r\n",
+              "size": 0,
+              "title": "Logon Successes grouped by Type & 10 minutes",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "count_",
+                    "label": "Count of disconnects by 10 minutes",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "name": "Logon Successes grouped by Type & 10 minutes"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"Logon\"\r\n| summarize Count=count() by User\r\n| sort by Count desc\r\n| take {TopCount}\r\n| render piechart ",
+              "size": 0,
+              "title": "Top {TopCount} Logon Successes Grouped by Account",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "User",
+                "createOtherGroup": 25
+              }
+            },
+            "customWidth": "33",
+            "name": "Top {TopCount} Logon Successes Grouped by Account",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"Logon\"\r\n| summarize Count=count() by ComputerName\r\n| sort by Count desc\r\n| take {TopCount}\r\n| render piechart ",
+              "size": 0,
+              "title": "Top {TopCount} Logon Successes Grouped by Computer",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "ComputerName",
+                "createOtherGroup": 25
+              }
+            },
+            "customWidth": "33",
+            "name": "Top {TopCount} Logon Successes Grouped by Computer",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"Logon\"\r\n| extend ExtendedInformation_Expanded = todynamic(ExtendedInformation)\r\n| mv-expand ExtendedInformation_Expanded\r\n| evaluate bag_unpack(ExtendedInformation_Expanded)\r\n| where FarMachineIP != \"-\" and FarMachineIP != \"::1\" and FarMachineIP != \"127.0.0.1\" and FarMachineIP != \"\"\r\n| summarize Count=count() by FarMachineIP\r\n| sort by Count desc\r\n| take {TopCount}\r\n| render piechart ",
+              "size": 0,
+              "title": "Top {TopCount} Logon Successes Grouped by Remote IP",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "FarMachineIP",
+                "createOtherGroup": 25
+              }
+            },
+            "customWidth": "33",
+            "name": "Top {TopCount} Logon Successes Grouped by Remote IP",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---"
+            },
+            "name": "text - 16"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "# RDP Disconnects\r\n\r\n---\r\n\r\n## Query Info\r\n\r\n---\r\n\r\n### RDP disconnects grouped by 10 minutes\r\nThis graph shows a count of all RDP disconnects events occurring grouped by 10-minute intervals. This is for trend monitoring. Large spikes indicate something at the network level has caused a service interruption.\r\n\r\n---\r\n\r\n### RDP disconnects grouped by 10 minutes\r\nThis list shows the combinations of devices and users that have had the highest amount of RDP drops for easily identifying those likely having a poor experience. \r\n\r\n---\r\n\r\n### Detailed RDP Disconnect Tracking\r\nThis list shows exact details of the RDP disconnects that are occurring including the time, Computer, User, and full event message. This provides a simpler way to obtain more granular details of the above item.\r\n\r\n",
+              "style": "info"
+            },
+            "name": "text - 9"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"RDP-Disconnect\"\r\n| summarize count() by bin(todatetime(TimeOfLogUTC), 10m)\r\n| render areachart ",
+              "size": 0,
+              "title": "RDP disconnects grouped by 10 minutes",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "count_",
+                    "label": "Count of disconnects by 10 minutes",
+                    "color": "orange"
+                  }
+                ]
+              }
+            },
+            "name": "RDP disconnects grouped by 10 minutes"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"RDP-Disconnect\"\r\n| summarize Count=count() by ComputerName, User\r\n| sort by Count desc",
+              "size": 0,
+              "title": "RDP Disconnects Grouped by Machine & User",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "User",
+                "createOtherGroup": 10
+              }
+            },
+            "customWidth": "50",
+            "name": "RDP Disconnects Grouped by Machine & User",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventType == \"RDP-Disconnect\"\r\n| project TimeOfLogUTC, ComputerName, EventType, User, Message\r\n| sort by todatetime(TimeOfLogUTC)",
+              "size": 0,
+              "title": "Detailed RDP Disconnect Tracking",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Detailed RDP Disconnect Tracking",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Dashboard"
+      },
+      "name": "Dashboard",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Events Export",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Query Info\r\nThis query is meant to provide an exportable list of every event from every device in the selected time range. This data will very likely exceed 250 lines in which case it needs to be exported using the triple dots in the upper right corner of the query or, the download arrow in the same location.\r\nDepending on the above factors, this may be an overwhelming amount of data. This could cause the query to fail. If so, consider the following options.\r\n1.\tReduce the time range such that less data needs to be queried.\r\n2.\tUse the Queries tab to locate data for specific devices as needed.\r\n3.\tConsider writing a query to get only the data you are looking for in the export.\r\n4.\tConsider exporting this data via an Azure Event Hub to a system that can display larger chunks of data.\r\n",
+              "style": "warning"
+            },
+            "name": "text - 1"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where User != \"defaultuser0\"\r\n| sort by ComputerName, todatetime(TimeOfLogUTC)\r\n| project-reorder TimeOfLogUTC",
+              "size": 2,
+              "showAnalytics": true,
+              "title": "System Usage Exportable Log ",
+              "noDataMessage": "No data found!!!",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "System Usage Exportable Log "
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "EventsExport"
+      },
+      "name": "Events Export",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Queries",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Specific Machine/User Monitoring\r\n\r\n---\r\n\r\nSearch events by a specific machine or a specific user by using the filters in the top right. Note that defaultuser0, which is the account used during ESP, is hidden from the results of all these queries.\r\n\r\n---\r\n\r\n#### Query Info\r\n\r\n### Device Specific Query Results\r\nThis query returns all events for the selected device(s) during the selected time range.\r\n\r\n---\r\n\r\n### User Specific Query Results\r\nThis query returns all events for the selected user(s) during the selected time range.\r\n\r\n---\r\n\r\n### Last Logon: Machine\r\nThis query returns the most recent logon (authentication) event on the searched machine(s) in the selected time range.\r\n\r\n---\r\n\r\n### Last Logon: User\r\nThis query returns the most recent logon (authentication) event using the searched user(s) in the selected time range.\r\n\r\n---\r\n\r\n### Reboot History: Machine\r\nShows all reboot history for the searched machine(s) within the selected time range.\r\n",
+              "style": "info"
+            },
+            "customWidth": "50",
+            "name": "text - 4",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "0456981a-cf22-49e3-814c-69161d51e955",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeviceID",
+                  "label": "Device Filter",
+                  "type": 1,
+                  "description": "Set the device to search for, can be partial name",
+                  "isRequired": true,
+                  "value": "Device",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "c4dc55b7-6347-429c-b0b3-b29838fff92f",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UserID",
+                  "label": "User ID",
+                  "type": 1,
+                  "description": "Search for User ID specific events, can be full or partial name",
+                  "isRequired": true,
+                  "value": "User",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "parameters - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where User != \"defaultuser0\"\r\n| where ComputerName contains \"{DeviceID}\"\r\n| sort by ComputerName,todatetime(TimeOfLogUTC)\r\n| project-reorder TimeOfLogUTC",
+              "size": 0,
+              "title": "Device Specific Query Results",
+              "noDataMessage": "No data found for selected device within time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Device Specific Query Results"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where User != \"defaultuser0\"\r\n| where User contains \"{UserID}\"\r\n| sort by ComputerName,todatetime(TimeOfLogUTC)\r\n| project-reorder TimeOfLogUTC",
+              "size": 0,
+              "title": "User Specific Query Results",
+              "noDataMessage": "No data found for selected user within time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "sortBy": [
+                  {
+                    "itemKey": "TimeOfLogUTC",
+                    "sortOrder": 2
+                  }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "TimeOfLogUTC",
+                  "sortOrder": 2
+                }
+              ]
+            },
+            "customWidth": "50",
+            "name": "query - 7"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| join kind=leftouter DeviceInventory_CL on ComputerName\r\n| where EventType == \"Logon\"\r\n| summarize arg_max(TimeGenerated,*) by ComputerName, User, LogonType\r\n| where User != \"defaultuser0\"\r\n| where ComputerName contains \"{DeviceID}\"\r\n| sort by ComputerName,todatetime(TimeOfLogUTC)\r\n| project TimeOfLogUTC, ComputerName, User, PrimaryUserUPN, EventType, LogonType, Message",
+              "size": 0,
+              "title": "Last Logon: Machine",
+              "noDataMessage": "No results found for machine search!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Last Logon: Machine",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where User != \"defaultuser0\"\r\n| where User contains \"{UserID}\"\r\n| where EventType == \"Logon\"\r\n| join kind=leftouter DeviceInventory_CL on ComputerName\r\n| summarize arg_max(TimeGenerated,*) by ComputerName, User, LogonType\r\n| sort by ComputerName,todatetime(TimeOfLogUTC)\r\n| project TimeOfLogUTC, ComputerName, User, PrimaryUserUPN, EventType, LogonType, Message",
+              "size": 0,
+              "title": "Last Logon: User",
+              "noDataMessage": "No results found for machine search!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Last Logon: Machine - Copy",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where ComputerName contains \"{DeviceID}\"\r\n| where EventType == \"Shutdown\" or EventType == \"Restart\" or EventType == \"Startup\"\r\n| where User != \"defaultuser0\"\r\n| sort by ComputerName,todatetime(TimeOfLogUTC)\r\n| join kind=leftouter DeviceInventory_CL on ComputerName\r\n| summarize arg_max(TimeGenerated,*) by TimeOfLogUTC\r\n| project TimeOfLogUTC, EventType, ComputerName, User, PrimaryUserUPN, LogonType, Message\r\n| take 25",
+              "size": 0,
+              "title": "Reboot History: Machine",
+              "noDataMessage": "No results found for machine search!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Reboot History: Machine",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Queries"
+      },
+      "name": "Quries",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Extra Events",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "Extra Events\r\n---\r\nUse this page to perform unfiltered searches on devices or users.\r\n\r\nThis was created because some events on the main Queries page are. This issue has effectively been reduced to hiding the defaultuser0 account.\r\n",
+              "style": "warning"
+            },
+            "name": "text - 9"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "0456981a-cf22-49e3-814c-69161d51e955",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeviceID",
+                  "label": "Device Filter",
+                  "type": 1,
+                  "description": "Set the device to search for, can be partial name",
+                  "isRequired": true,
+                  "value": "Device",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "c4dc55b7-6347-429c-b0b3-b29838fff92f",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UserID",
+                  "label": "User ID",
+                  "type": 1,
+                  "description": "Search for User ID specific events, can be full or partial name",
+                  "isRequired": true,
+                  "value": "user",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where ComputerName contains \"{DeviceID}\"\r\n| sort by ComputerName,todatetime(TimeOfLogUTC)",
+              "size": 0,
+              "title": "All Events for Selected Device(s)",
+              "noDataMessage": "No data found for device and/or time range!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "All Events for Selected Device(s)"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where User contains \"{UserID}\"\r\n| sort by ComputerName,todatetime(TimeOfLogUTC)",
+              "size": 0,
+              "title": "All Events for Selected User(s)",
+              "noDataMessage": "No data found for user/time-range!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "sortBy": [
+                  {
+                    "itemKey": "LogonType",
+                    "sortOrder": 1
+                  }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "LogonType",
+                  "sortOrder": 1
+                }
+              ]
+            },
+            "customWidth": "50",
+            "name": "All Events for Selected User(s)"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "ExtraEvents"
+      },
+      "name": "Extra Events",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Ingestion Information",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Ingestion Information\r\nThis page is primarily used for monitoring the volume of incoming data and monitoring the deployment of updates.\r\n\r\n---\r\n\r\n## Query Info\r\n\r\n---\r\n\r\n### Count of Devices by Script Version\r\nThis is how many unique computer names appear in the selected time range, grouped by script version. This is primarily for monitoring the deployment of updates (new script versions).\r\n\r\n---\r\n\r\n### Script Version by Data Point Count\r\nThis is how many data points (events) have been ingested in the selected time range, grouped by script version alone. This is primarily for monitoring the deployment of updates (new script versions). \r\n\r\n---\r\n\r\n### Chart of Incoming Events by Script Version: 1H\r\nThis is how many data points (events) have arrived grouped by one hour and distinguished by script version. This is primarily for monitoring the deployment of updates (new script versions).\r\n\r\n---\r\n\r\n### All incoming Data Points by Point Type & 1H\r\nThis chart groups incoming events by 1-hour time frames and event type. This is helpful for trend monitoring. \r\n\r\n---\r\n\r\n### “Chart of all Incoming Data by Device” & “Chart of all Incoming Data by Device - Filtered”\r\nThese two charts have a very important purpose. \r\n\r\nThe left chart shows the sum of all events coming in broken down by machine and grouped by 1 hour. \r\n\r\nThe right chart shows the same thing however, it has a filter in place to verify that each displayed event is unique by “ComputerName, TimeOfLogUTC, EventID, EventType, User, LogonType, Message” – in effect, this prevents it from showing duplicate events. If the left chart and right chart don’t match, it’s likely duplicate events are being ingested for some reason. This is most likely due to something interfering with time tracking.\r\n",
+              "style": "info"
+            },
+            "name": "text - 6"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where TimeGenerated {TimeRange}\r\n| summarize arg_max(TimeGenerated, *) by ComputerName, ScriptVersion\r\n| summarize Total_Endpoints=count() by ScriptVersion\r\n",
+              "size": 0,
+              "title": "Count of Devices by Script Version",
+              "noDataMessage": "No data found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "25",
+            "name": "Count of Devices by Script Version",
+            "styleSettings": {
+              "maxWidth": "25"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where TimeGenerated {TimeRange}\r\n| summarize count() by ScriptVersion\r\n| render piechart ",
+              "size": 0,
+              "title": "Script Version by Data Point Count",
+              "noDataMessage": "No Data found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "",
+                    "label": "None",
+                    "color": "redDark"
+                  },
+                  {
+                    "seriesName": "V12",
+                    "color": "greenDark"
+                  },
+                  {
+                    "seriesName": "PR003",
+                    "color": "redBright"
+                  },
+                  {
+                    "seriesName": "V13",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "30",
+            "name": "query - 4",
+            "styleSettings": {
+              "maxWidth": "30"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where TimeGenerated{TimeRange}\r\n| summarize count() by bin(TimeGenerated,1h), ScriptVersion\r\n| render areachart",
+              "size": 0,
+              "title": "Chart of Incoming Events by Script Version: 1H",
+              "noDataMessage": "No Data Found for Selected Range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "<empty>",
+                    "label": "None",
+                    "color": "redDark"
+                  },
+                  {
+                    "seriesName": "V12",
+                    "color": "yellow"
+                  },
+                  {
+                    "seriesName": "V13",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "PR003",
+                    "color": "redDark"
+                  }
+                ]
+              }
+            },
+            "customWidth": "45",
+            "name": "Chart of Incoming Events by Script Version: 1H",
+            "styleSettings": {
+              "maxWidth": "45"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| sort by TimeOfLogUTC\r\n| distinct ComputerName, TimeOfLogUTC, EventID, EventType, User, LogonType, Message\r\n| summarize count() by EventType, bin(todatetime(TimeOfLogUTC), 1h)",
+              "size": 0,
+              "title": "All incoming Data Points by Point Type & 1H",
+              "noDataMessage": "No data found!!!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "unstackedbar",
+              "tileSettings": {
+                "showBorder": false,
+                "titleContent": {
+                  "columnMatch": "EventType",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "count_",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "EventType",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "count_",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "mapSettings": {
+                "locInfo": "LatLong",
+                "sizeSettings": "count_",
+                "sizeAggregation": "Sum",
+                "legendMetric": "count_",
+                "legendAggregation": "Sum",
+                "itemColorSettings": {
+                  "type": "heatmap",
+                  "colorAggregation": "Sum",
+                  "nodeColorField": "count_",
+                  "heatmapPalette": "greenRed"
+                }
+              }
+            },
+            "name": "All incoming Data Points by Point Type & 1H"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| sort by TimeOfLogUTC\r\n| summarize count() by ComputerName, bin(todatetime(TimeOfLogUTC), 1h)",
+              "size": 0,
+              "title": "Chart of all Incoming Data by Device",
+              "noDataMessage": "No data found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "scatterchart",
+              "chartSettings": {
+                "group": "ComputerName",
+                "createOtherGroup": 50
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart of all Incoming Data by Device",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SystemUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| distinct ComputerName, TimeOfLogUTC, EventID, EventType, User, LogonType, Message\r\n| sort by TimeOfLogUTC\r\n| summarize count() by ComputerName, bin(todatetime(TimeOfLogUTC), 1h)",
+              "size": 0,
+              "title": "Chart of all Incoming Data by Device - Filtered",
+              "noDataMessage": "No data found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "scatterchart",
+              "chartSettings": {
+                "group": "ComputerName",
+                "createOtherGroup": 50
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart of all Incoming Data by Device - Filtered",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "IngestionInformation"
+      },
+      "name": "Ingestion Information",
+      "styleSettings": {
+        "showBorder": true
+      }
+    }
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
