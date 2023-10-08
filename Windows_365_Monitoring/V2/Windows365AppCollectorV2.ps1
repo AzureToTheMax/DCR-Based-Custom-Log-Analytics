@@ -471,7 +471,8 @@ $AzureADTenantID = Get-AzureADTenantID
 
 #Get computer info
 $ComputerInfo = Get-CimInstance -ClassName Win32_ComputerSystem
-$ComputerName = $ComputerInfo.Name
+#$ComputerName = $ComputerInfo.Name - fails on literally .001% of devices. $ENV:Computername seems consistent. Correction below.
+$ComputerName = $env:COMPUTERNAME
 $ComputerManufacturer = $ComputerInfo.Manufacturer
 
 	#Get network adapters. Not sure when region based software may come into play, but better to have it.
