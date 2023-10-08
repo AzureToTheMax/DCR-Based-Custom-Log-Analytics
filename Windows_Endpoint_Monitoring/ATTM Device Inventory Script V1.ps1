@@ -15,7 +15,7 @@ https://azuretothemax.net/2023/07/27/powershell-dcr-log-analytics-for-windows-en
 Author:      Maxton Allen
 Contact:     @AzureToTheMax
 Created:     2023-07-30
-Updated:     2023-07-30
+Updated:     2023-10-08
 Based on the work of Nickolaj Andersen - @NickolajA, and the MSEndpointMGR team. 
 This is based on their original device inventory.
 
@@ -53,6 +53,12 @@ Improvements over original script from MSEndpointMGR team...
 	20. Added a null check to the Install Date Conversions to avoid the annoying warnings whenever we try to convert an app with a null value. 
 	21. Updated to a DCR Function App
 		- Updated to use latest authentication
+
+
+1.1 2023-10-08
+- Updated $ComputerLastBoot (uptime) query to convert the value to UTC. Previous value was reporting back in local device time zone.
+- Updated the pull for ComputerName to use $ENV:COMPUTERNAME instead of Get-CimInstance class as this was failing on a very small set (.001%) of devices.
+
 	
 	
 
@@ -506,7 +512,8 @@ $AzureADTenantID = Get-AzureADTenantID
 
 #Get computer info
 $ComputerInfo = Get-CimInstance -ClassName Win32_ComputerSystem
-$ComputerName = $ComputerInfo.Name
+#$ComputerName = $ComputerInfo.Name - fails on literally .001% of devices. $ENV:Computername seems consistent. Correction below.
+$ComputerName = $env:COMPUTERNAME
 $ComputerManufacturer = $ComputerInfo.Manufacturer
 
 if($ComputerManufacturer -match "HP|Hewlett-Packard"){
@@ -519,7 +526,8 @@ if($CollectDeviceInventory) {
     $ComputerOSInfo = Get-CimInstance -ClassName Win32_OperatingSystem
     $ComputerBiosInfo = Get-CimInstance -ClassName Win32_Bios
     $ComputerModel = $ComputerInfo.Model
-    $ComputerLastBoot = $ComputerOSInfo.LastBootUpTime
+    #$ComputerLastBoot = $ComputerOSInfo.LastBootUpTime - was pulling in local device timezone. Correction below.
+	$ComputerLastBoot = ($ComputerOSInfo.LastBootUpTime).ToUniversalTime()
     $ComputerUpTime = [int](New-TimeSpan -Start $ComputerLastBoot -End $Date).Days
     $ComputerInstalledDate = $ComputerOSInfo.InstallDate
     $DisplayVersion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name DisplayVersion -ErrorAction SilentlyContinue).DisplayVersion
