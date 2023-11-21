@@ -1,3 +1,5 @@
+#Credit: https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-collection-rule-edit
+
 #overall variables
     #subscription ID where the DCR is
     $Subscription = ""
