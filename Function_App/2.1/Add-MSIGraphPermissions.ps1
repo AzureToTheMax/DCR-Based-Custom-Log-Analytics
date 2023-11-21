@@ -1,3 +1,5 @@
+# To my knowledge (AzureToTheMax) this script was created by the MSEndpointMgr Team, likely Jan Ketil Skanke. Please contact me if this is incorrect.
+
 # Requires -Modules Microsoft.Graph
 # Install the module. (You need admin on the machine.)
 # Install-Module Microsoft.Graph
