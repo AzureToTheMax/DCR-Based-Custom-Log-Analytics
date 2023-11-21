@@ -11,12 +11,14 @@ Author:      Maxton Allen
 Contact:     @AzureToTheMax
 Created:     2021-06-07
 Updated:     2023-02-17
-Original: Nickolaj Andersen, @NickolajA
+Credit:      This Function incorporates the work of Nickolaj Andersen (@NickolajA) of the MSEndpointMgr team and the AADDeviceTurst project. 
+             The way I am using it for Log Analytics is conceptually based on the work of Jan Ketil Skanke (@JankeSkanke) of the MSEndpointMgr team and the Intune Enhanced Inventory project. See the credit section in my blog below for more details. 
+Blog:        https://azuretothemax.net/2023/05/31/powershell-dcr-log-analytics-part-2-1-overview/
 
             
 Version history:
 1 - 2021-06-07 Function created (Nickolaj Andersen)
-2 - 2022-12-08 Function updatd to use DCR/DCE (Maxton Allen)
+2 - 2022-12-08 Function updated to use DCR/DCE (Maxton Allen)
 3 - 2023-02-17 Updated to newer Authentication API's, updated ability to run locally using app reg or use self auth for all items. (Maxton Allen)
 4 - 2023-05-27 Function app updated to latest authentication methods improved by @AzureToTheMax.
 #>
