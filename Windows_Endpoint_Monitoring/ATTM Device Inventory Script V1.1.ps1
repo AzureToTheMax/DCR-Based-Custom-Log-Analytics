@@ -16,8 +16,7 @@ Author:      Maxton Allen
 Contact:     @AzureToTheMax
 Created:     2023-07-30
 Updated:     2023-10-08
-Based on the work of Nickolaj Andersen - @NickolajA, and the MSEndpointMGR team. 
-This is based on their original device inventory.
+This script is an upgraded version of the client-side script by Jan Ketil Skanke (@JankeSkanke) of the MSEndpointMgr team for the Intune Enhanced Inventory project.
 
 
    
