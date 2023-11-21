@@ -33,7 +33,7 @@ $DateCurrentUTC = (Get-Date).ToUniversalTime()
     Contact:     @AzureToTheMax
     Created:     2023-08-26
     Updated:     2023-08-26
-
+    Credit:	 This script is conceptually based on the client-side script by Jan Ketil Skanke (@JankeSkanke) of the MSEndpointMgr team for the Intune Enhanced Inventory project.
 
    
 Version history:
