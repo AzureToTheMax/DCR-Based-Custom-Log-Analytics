@@ -3,8 +3,7 @@
 <#
 .SYNOPSIS
 Function App for uploading DCR/DCE based content instead of using the legacy HTTP API.
-Uses the devices reported Tenant and ID to authenticate the upload.
-Can be ran locally via Visual Studio Code if a proper App Registration / Secret is provided. 
+Can be ran locally via Visual Studio Code if a proper App Registration / Secret is provided. App reg and secret not required or recommended when running from Azure.
             
 .NOTES
 Author:      Maxton Allen
