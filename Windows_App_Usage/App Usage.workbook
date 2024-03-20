@@ -1,0 +1,1008 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "<img src=\"https://azuretothemax.files.wordpress.com/2023/03/image0001.png?w=1024\" height=\"100\")>"
+      },
+      "customWidth": "15",
+      "name": "text - 12",
+      "styleSettings": {
+        "maxWidth": "15"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "\r\n# App Usage V1\r\n---\r\nThis workbook is used to monitor your Windows Endpoint Environments App Usage. Use the below selectors to alter the viewable data Time Range and choose a tab of information to view. Only data points ingested during the selected time range will be displayed. Time Generated is when data was ingested, TimeOfLogUTC is when it happened. Time range filtering is based on TimeOfLogUTC.\r\n\r\nNote that when viewing the workbook, TimeOfLogUTC may adjust to your time zone based on your Azure preferences. This does not apply to exported data.\r\n\r\nMore information can be found at https://azuretothemax.net/log-analytics-index/\r\n\r\n\r\n",
+        "style": "info"
+      },
+      "customWidth": "85",
+      "name": "Info",
+      "styleSettings": {
+        "maxWidth": "85"
+      }
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "501fdd6f-bceb-43dc-a5f2-27785544aa7d",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time Range",
+            "type": 4,
+            "description": " Select time range forviewing",
+            "isRequired": true,
+            "value": {
+              "durationMs": 2592000000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2419200000
+                },
+                {
+                  "durationMs": 2592000000
+                }
+              ],
+              "allowCustom": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters - 1"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "4d0ee788-3678-42a8-9df4-bc0325ea7de3",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Dashboard",
+            "subTarget": "Dashboard",
+            "preText": "Dashboard",
+            "postText": "",
+            "style": "link"
+          },
+          {
+            "id": "ac48d7ab-c997-494c-8531-1aa044809627",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Queries",
+            "subTarget": "Queries",
+            "style": "link"
+          },
+          {
+            "id": "07de5b60-c132-483d-89e8-60f28d1a1789",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Ingestion Information",
+            "subTarget": "IngestionInformation",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "links - 7"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Dashboard",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "---\r\n# App Usage Dashboard\r\n---\r\nThis page provides a general overview of App Usage with the general goal of identifying outliers. \r\n\r\n---\r\n\r\n### Summary of Creations and Terminations by 30 Minute Intervals\r\nThis chart displays the total creations and terminations aggregated by 30 minute time spans over your selected time range.\r\n\r\n---\r\n\r\n### Summary of Events by Computer Name & 30 Minute intervals\r\nThis chart displays the total events (creations and terminations) by Computer Name aggregated by 30-minute time spans over your selected time range.\r\n\r\n---\r\n\r\n### Top 10 Most Creations by Program\r\nThis is a list of the top 10 most executed executables over the selected time period.\r\n\r\n---\r\n\r\n### Top 10 Most Terminations by Program\r\nThis is a list of the top 10 most terminated executables over the selected time period.\r\n\r\n---\r\n\r\n### Top 10 Most Creations by Device\r\nThis is a list of the top 10 most executed executables by device over the selected time period.\r\n\r\n---\r\n\r\n### Top 10 Most Terminations by Device\r\nThis is a list of the top 10 most terminated executables by device over the selected time period.\r\n\r\n---\r\n\r\n### Top 10 Most Creations by User\r\nThis is a list of the top 10 most execution events by user over the selected time period.\r\n\r\n---\r\n\r\n### Top 10 Most Terminations by User\r\nThis is a list of the top 10 most termination events by user over the selected time period.\r\n\r\n---\r\n",
+              "style": "info"
+            },
+            "name": "text - 6"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventID == \"4689\" or EventID == \"4688\"\r\n| summarize count() by EventType, bin(todatetime(TimeOfLogUTC), 30m)\r\n| render timechart ",
+              "size": 0,
+              "title": "Summary of Creations and Terminations by 30 Minutes",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Summary of Creations and Terminations by 30 Minute Intervals",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventID == \"4689\" or EventID == \"4688\"\r\n| summarize count() by ComputerName, bin(todatetime(TimeOfLogUTC), 30m)\r\n| sort by count_\r\n| render timechart ",
+              "size": 0,
+              "title": "Summary of Events by Computer Name & 30 Minutes",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "group": "ComputerName",
+                "createOtherGroup": 20
+              }
+            },
+            "customWidth": "50",
+            "name": "Summary of Events by Computer Name & 30 Minute intervals",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where isnotempty( ComputerName)\r\n| where isnotempty(TimeOfLogUTC)\r\n| where EventType == \"Creation\"\r\n| summarize Count=count() by Program\r\n| order by Count desc\r\n| take 10",
+              "size": 3,
+              "title": "Top 10 Most Creations by Program",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "tileSettings": {
+                "showBorder": false,
+                "titleContent": {
+                  "columnMatch": "Program",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "dcount_ManagedDeviceID",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "Program",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "dcount_ManagedDeviceID",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "chartSettings": {
+                "group": "Program",
+                "createOtherGroup": 10
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 6",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where isnotempty( ComputerName)\r\n| where isnotempty(TimeOfLogUTC)\r\n| where EventType == \"Termination\"\r\n| summarize Count=count() by Program\r\n| order by Count desc\r\n| take 10",
+              "size": 3,
+              "title": "Top 10 Most Terminations by Program",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "tileSettings": {
+                "showBorder": false,
+                "titleContent": {
+                  "columnMatch": "Program",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "dcount_ManagedDeviceID",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "Program",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "dcount_ManagedDeviceID",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "chartSettings": {
+                "group": "Program",
+                "createOtherGroup": 10
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 6",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where isnotempty( ComputerName)\r\n| where isnotempty(TimeOfLogUTC)\r\n| where EventType == \"Creation\"\r\n| summarize Count=count() by ComputerName\r\n| order by Count desc\r\n| take 10",
+              "size": 3,
+              "title": "Top 10 Most Creations by Device",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "tileSettings": {
+                "showBorder": false,
+                "titleContent": {
+                  "columnMatch": "Program",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "dcount_ManagedDeviceID",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "Program",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "dcount_ManagedDeviceID",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "chartSettings": {
+                "group": "Program",
+                "createOtherGroup": 10
+              }
+            },
+            "customWidth": "50",
+            "name": "Top 10 Most Creations by Device",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where isnotempty( ComputerName)\r\n| where isnotempty(TimeOfLogUTC)\r\n| where EventType == \"Termination\"\r\n| summarize Count=count() by ComputerName\r\n| order by Count desc\r\n| take 10",
+              "size": 3,
+              "title": "Top 10 Most Terminations by Device",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "tileSettings": {
+                "showBorder": false,
+                "titleContent": {
+                  "columnMatch": "Program",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "dcount_ManagedDeviceID",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "Program",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "dcount_ManagedDeviceID",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "chartSettings": {
+                "group": "Program",
+                "createOtherGroup": 10
+              }
+            },
+            "customWidth": "50",
+            "name": "Top 10 Most Terminations by Device",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where isnotempty( ComputerName)\r\n| where isnotempty(TimeOfLogUTC)\r\n| where EventType == \"Termination\"\r\n| summarize Count=count() by User\r\n| order by Count desc\r\n| take 10",
+              "size": 3,
+              "title": "Top 10 Most Creations by User",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "tileSettings": {
+                "showBorder": false,
+                "titleContent": {
+                  "columnMatch": "Program",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "dcount_ManagedDeviceID",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "Program",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "dcount_ManagedDeviceID",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "chartSettings": {
+                "group": "Program",
+                "createOtherGroup": 10
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 6 - Copy",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL\r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where isnotempty( ComputerName)\r\n| where isnotempty(TimeOfLogUTC)\r\n| where EventType == \"Creation\"\r\n| summarize Count=count() by User\r\n| order by Count desc\r\n| take 10",
+              "size": 3,
+              "title": "Top 10 Most Terminations by User",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "tileSettings": {
+                "showBorder": false,
+                "titleContent": {
+                  "columnMatch": "Program",
+                  "formatter": 1
+                },
+                "leftContent": {
+                  "columnMatch": "dcount_ManagedDeviceID",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "auto"
+                  },
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "graphSettings": {
+                "type": 0,
+                "topContent": {
+                  "columnMatch": "Program",
+                  "formatter": 1
+                },
+                "centerContent": {
+                  "columnMatch": "dcount_ManagedDeviceID",
+                  "formatter": 1,
+                  "numberFormat": {
+                    "unit": 17,
+                    "options": {
+                      "maximumSignificantDigits": 3,
+                      "maximumFractionDigits": 2
+                    }
+                  }
+                }
+              },
+              "chartSettings": {
+                "group": "Program",
+                "createOtherGroup": 10
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 6 - Copy",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Dashboard"
+      },
+      "name": "Dashboard",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Queries",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Endpoint Queries\r\nThis page is used to query specific information about specific executables, devices, or users.\r\n\r\nYou can search by partial or full Device Names, User IDs, or Application (executable) names using the filters below.\r\n\r\nNote: Application names in this case are truly the executable names. For instance, it is not Word, it is WinWord.exe. \r\n",
+              "style": "info"
+            },
+            "name": "text - 5"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "83c89383-66cf-4b68-a610-eb279efcb93f",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "Application",
+                  "type": 1,
+                  "isRequired": true,
+                  "value": "chrome"
+                },
+                {
+                  "id": "922eb187-dec0-4499-836c-877fe86656e2",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeviceID",
+                  "label": "Device Filter",
+                  "type": 1,
+                  "description": "Search by full or partial device name",
+                  "isRequired": true,
+                  "value": "Device-Name",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "5c603426-b732-462f-890f-afe2704caa34",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UserID",
+                  "label": "User ID",
+                  "type": 1,
+                  "description": "Filter by full or partial User ID",
+                  "isRequired": true,
+                  "value": "User-Name",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - 6"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "## Application Specific Results\r\n\r\n---\r\n\r\n### Application Most Recent Usage\r\nThis query shows you only the most recent instance of a certain executable being launched per combination of unique Computer Name, Program, Program Path and User. This is useful for identifying who is really using an application and when they last used it.\r\n\r\n---\r\n\r\n### Chart: Application Most Recent Usage \r\nThis query shows the same data as the above except it is now summarized by the total events per day, then graphed out over time. This gives you a quick visual for how frequently the app is being used by the audience who has made some use of it in the past 30 days.\r\n\r\n---\r\n\r\n### All Application Usage\r\nThis is similar to the above charts except it now shows all executions of the application as opposed to only the most recent.\r\n\r\n---\r\n\r\n### Chart: All Application Usage\r\nAnd again, this is similar to the prior chart in except it shows all executions of the application as opposed to only the most recent.\r\n",
+              "style": "info"
+            },
+            "name": "text - 11"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| sort by todatetime(TimeOfLogUTC)\r\n| where EventID == \"4688\"\r\n| summarize max(todatetime(TimeOfLogUTC)) by ComputerName, EventID, EventType, Program, ProgramPath, User\r\n| where Program contains \"{Application}\"\r\n| sort by max_TimeOfLogUTC",
+              "size": 0,
+              "title": "Application Most Recent Usage",
+              "noDataMessage": "No data found for selected time range and/or Application!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Application Most Recent Usage"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| sort by todatetime(TimeOfLogUTC)\r\n| where EventID == \"4688\"\r\n| summarize max(todatetime(TimeOfLogUTC)) by ComputerName, EventID, EventType, Program, ProgramPath, User\r\n| where Program contains \"{Application}\"\r\n| sort by max_TimeOfLogUTC\r\n| summarize count() by bin(todatetime(max_TimeOfLogUTC), 1d)\r\n| render barchart",
+              "size": 0,
+              "title": "Chart: Application Most Recent Usage ",
+              "noDataMessage": "No data found for selected time range and/or Application!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Chart: Application Most Recent Usage "
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| sort by todatetime(TimeOfLogUTC)\r\n| where EventID == \"4688\"\r\n| where Program contains \"{Application}\"\r\n| project ComputerName, EventID, EventType, Program, ProgramPath, User, TimeOfLogUTC\r\n| sort by todatetime(TimeOfLogUTC)",
+              "size": 0,
+              "title": "All Application Usage",
+              "noDataMessage": "No data found for selected time range and/or Application!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "All Application Usage"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| sort by todatetime(TimeOfLogUTC)\r\n| where EventID == \"4688\"\r\n| where Program contains \"{Application}\"\r\n| summarize count() by bin(todatetime(TimeOfLogUTC), 1d)\r\n| render barchart",
+              "size": 0,
+              "title": "Chart: All Application Usage",
+              "noDataMessage": "No data found for selected time range and/or Application!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Chart: All Application Usage"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\r\n\r\n# Device Specific Results\r\n\r\n---\r\n\r\n### Device-Specific Results\r\nThis query shows all application terminations and creations associated with the searched device(s).\r\n\r\n---\r\n\r\n### Chart: Device-Specific Results by Top 10 Apps\r\nThis query shows a summary of the top 10 most frequently launched executables associated with the searched device(s) and is primarily intended to provide a quick device-level outlier visualization.\r\n\r\n",
+              "style": "info"
+            },
+            "name": "text - 8"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventID == \"4689\" or EventID == \"4688\"\r\n| where ComputerName contains \"{DeviceID}\"\r\n| project TimeOfLogUTC, ComputerName, EventID, EventType, Program, ProgramPath, User\r\n| sort by todatetime(TimeOfLogUTC) desc",
+              "size": 0,
+              "title": "Device Specific Results",
+              "noDataMessage": "No data found for selected time range and/or device!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "sortBy": []
+            },
+            "customWidth": "50",
+            "name": "query - 7"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventID == \"4689\" or EventID == \"4688\"\r\n| where ComputerName contains \"{DeviceID}\"\r\n| summarize count() by Program",
+              "size": 0,
+              "title": "Chart: Device Specific Results by Top 10 Apps",
+              "noDataMessage": "No data found for selected time range and/or device!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "barchart",
+              "chartSettings": {
+                "group": "Program",
+                "createOtherGroup": 10
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 9"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\r\n\r\n# User ID Specific Results\r\n\r\n---\r\n\r\n### User ID Specific Results\r\nMuch like the above device query, this query shows all application terminations and creations associated with the searched user(s) across any device.\r\n\r\n---\r\n\r\n### Chart: User ID Specific Results by Top 10 Apps\r\nMuch like the above device query, this query shows a summary of the top 10 most frequently launched executables associated with the searched users(s) and is primarily intended to provide a quick user-level outlier visualization.\r\n\r\n",
+              "style": "info"
+            },
+            "name": "text - 10"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventID == \"4689\" or EventID == \"4688\"\r\n| where User contains \"{UserID}\"\r\n| project TimeOfLogUTC, ComputerName, EventID, EventType, Program, ProgramPath, User\r\n| sort by todatetime(TimeOfLogUTC) desc",
+              "size": 0,
+              "title": "User ID Specifc Results",
+              "noDataMessage": "No data found for selected time range and/or UserID!",
+              "noDataMessageStyle": 4,
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "User ID Specifc Results"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| where EventID == \"4689\" or EventID == \"4688\"\r\n| where User contains \"{UserID}\"\r\n| summarize count() by Program",
+              "size": 0,
+              "title": "Chart: User ID Specifc Results by Top 10 Apps",
+              "noDataMessage": "No data found for selected time range and/or UserID!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "barchart",
+              "chartSettings": {
+                "group": "Program",
+                "createOtherGroup": 10
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart: User ID Specifc Results by Top 10 Apps"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Queries"
+      },
+      "name": "Queries",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Application Usage Ingestion Information",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### Ingestion Information\r\n\r\nThis page is primarily used by admins for monitoring the volume of incoming data and monitoring the deployment of updates (changes to the Script Version).",
+              "style": "info"
+            },
+            "name": "text - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where TimeGenerated {TimeRange}\r\n| where TimeGenerated {TimeRange}\r\n| summarize arg_max(TimeGenerated, *) by ComputerName, ScriptVersion\r\n| summarize Total_Endpoints=count() by ScriptVersion",
+              "size": 4,
+              "title": "Count of Devices Sending Data",
+              "noDataMessage": "No devices found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "gridSettings": {
+                "labelSettings": [
+                  {
+                    "columnId": "ScriptVersion",
+                    "label": "Script Version"
+                  },
+                  {
+                    "columnId": "Total_Endpoints",
+                    "label": "Total Endpoints"
+                  }
+                ]
+              }
+            },
+            "customWidth": "20",
+            "name": "Count of Devices Sending Data",
+            "styleSettings": {
+              "maxWidth": "20",
+              "showBorder": true
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where TimeGenerated {TimeRange}\r\n| summarize count() by ScriptVersion\r\n| render piechart ",
+              "size": 0,
+              "title": "Script Version by Data Point Count",
+              "noDataMessage": "No Data Found!",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "",
+                    "label": "None",
+                    "color": "redDark"
+                  },
+                  {
+                    "seriesName": "V8",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "PR003",
+                    "color": "redBright"
+                  }
+                ]
+              }
+            },
+            "customWidth": "30",
+            "name": "query - 4",
+            "styleSettings": {
+              "maxWidth": "30"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where TimeGenerated{TimeRange}\r\n| summarize count() by bin(TimeGenerated,1h), ScriptVersion\r\n| render areachart",
+              "size": 0,
+              "title": "Chart of Incoming Events by Log Version: 1H",
+              "noDataMessage": "No Data Found for Selected Range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "<empty>",
+                    "label": "None",
+                    "color": "redDark"
+                  },
+                  {
+                    "seriesName": "PR003",
+                    "color": "redDark"
+                  },
+                  {
+                    "seriesName": "V8",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 5",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| summarize count() by ComputerName, bin(todatetime(TimeOfLogUTC), 60m)\r\n| sort by count_\r\n\r\n",
+              "size": 0,
+              "title": "Chart of Events Coming in by Computer",
+              "noDataMessage": "No data found for selected time range!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "scatterchart",
+              "chartSettings": {
+                "group": "ComputerName",
+                "createOtherGroup": 50
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 3",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AppUsage_CL \r\n| where todatetime(TimeOfLogUTC) {TimeRange}\r\n| distinct ComputerName, EventID, EventType, TimeOfLogUTC, Program, ProgramPath, User, Message\r\n| summarize count() by ComputerName, bin(todatetime(TimeOfLogUTC), 60m)\r\n| sort by count_",
+              "size": 0,
+              "title": "Chart of Events Coming in by Computer: Disctinct",
+              "noDataMessage": "No data found for selected time range!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "scatterchart",
+              "chartSettings": {
+                "group": "ComputerName",
+                "createOtherGroup": 50
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 3 - Copy",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "IngestionInformation"
+      },
+      "name": "group - 15",
+      "styleSettings": {
+        "showBorder": true
+      }
+    }
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
