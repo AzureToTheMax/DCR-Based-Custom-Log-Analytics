@@ -885,7 +885,7 @@ $RawEvents = $FinalLog
 
 #Do final event count
 $FinalPercentage = ($EventCount/$FilteredEvents).tostring("P")
-Write-host "$($EventCount) Events found. $($FilteredEvents) filtered out. $($FinalPercentage) of events retained."
+Write-host "$($EventCount) Events found. $($FilteredEvents) events filtered out. $($FinalPercentage) of events retained."
 
 #Convert for use with DCR
 $FinalLog = $FinalLog | ConvertTo-Json -Depth 3
