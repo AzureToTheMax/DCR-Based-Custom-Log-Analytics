@@ -102,6 +102,7 @@ $EventCount = $null
 
 #zero our filter count
 $FilteredEvents = 0
+$FinalPercentage = $null
 
 
 
@@ -884,8 +885,10 @@ $headers.Add("Content-Type", "application/json")
 $RawEvents = $FinalLog
 
 #Do final event count
+if ($EventCount -ne $null){
 $FinalPercentage = ($EventCount/$FilteredEvents).tostring("P")
-Write-host "$($EventCount) Events found. $($FilteredEvents) events filtered out. $($FinalPercentage) of events retained."
+Write-host "$($EventCount) Events found. $($FilteredEvents) events filtered out. $($FinalPercentage) of events not filtered out."
+}
 
 #Convert for use with DCR
 $FinalLog = $FinalLog | ConvertTo-Json -Depth 3
