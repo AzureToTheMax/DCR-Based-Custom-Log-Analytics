@@ -49,7 +49,7 @@ $ScriptVersion = "1"
 $AzureFunctionURL = "Your Function App URL"
 
 #Table name - must be exact including _CL
-$Table = "SystemUsage_CL"
+$Table = "AppUsage_CL"
 
 #DCR Immutable ID
 $DcrImmutableId = "Your Immutable ID"
