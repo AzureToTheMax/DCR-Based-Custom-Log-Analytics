@@ -108,7 +108,7 @@ $Date = (Get-Date)
 $WriteLogFile = $false
 
 #Enable or disable the log upload delay. True/False. Default is $True.
-$Delay = $true
+$Delay = $false
 
 #Set FooUser Values
 $TenantDomain = "fooUser@YOURTENANT.onmicrosoft.com"
@@ -783,19 +783,34 @@ if($CollectDeviceInventory) {
     $SMBService = Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation" -ErrorAction SilentlyContinue
     #It should NOT contain mrxsmb10
 
+	#get the server SMB properties
+	$SMBServer = Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -ErrorAction SilentlyContinue
+
+	#Yes I know I could do this with a single if statement but this is easier to troubleshoot.
     if($Mrxsmb10Status.Start -eq "4"){
     #Startup type on the MrxSMB10Status is disabled... (good)
 		if ($SMBService.DependOnService -notcontains "MRxSmb10" ){
         #SMBV1 service startup dependency not found on LanManWorkstation (good)
-        $SMBv1Status = "Correctly Disabled"
+			if ($SMBServer.SMB1 -eq "0"){
+			#SMBv1 server correctly disabled (good, all checks now passed)
+			$SMBv1Status = "Correctly Disabled"
+			} else {
+			#SMBv1 server is not correctly disabled (bad)
+			$SMBv1Status = "Incompletely/Not Disabled"
+			write-host "Policy check: SMBv1 Server not correctly disabled." -ForegroundColor Red
+			}
         } else {
         #SMB v1 was found in the startup dependent services on LanManWorkstation (bad)
         $SMBv1Status = "Incompletely/Not Disabled"
+		write-host "Policy check: SMBv1 client service dependency not correctly disabled." -ForegroundColor Red
         }
     } else {
         #Startup type on the MrxSMB10Status is NOT disabled 
         $SMBv1Status = "Incompletely/Not Disabled"
+		write-host "Policy check: SMBv1 client service startup not correctly disabled." -ForegroundColor Red
     }
+
+
 
 
 
