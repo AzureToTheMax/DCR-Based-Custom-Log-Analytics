@@ -63,6 +63,7 @@ Improvements over original script from MSEndpointMGR team...
 - Updated SMB V1 detection to change from feature presence to overall enablement or disablement as typically recognized by security vendors
 	Note: Just because these settings are correctly detected as set does NOT necessarily mean you have it set via policy.
     See: https://learn.microsoft.com/en-us/windows-server/storage/file-server/troubleshoot/detect-enable-and-disable-smbv1-v2-v3?tabs=server
+- Updated from Get-WmiObject to Get-CimInstance to better suppport Powershell 7.0
 
 
 
@@ -108,7 +109,7 @@ $Date = (Get-Date)
 $WriteLogFile = $false
 
 #Enable or disable the log upload delay. True/False. Default is $True.
-$Delay = $false
+$Delay = $true
 
 #Set FooUser Values
 $TenantDomain = "fooUser@YOURTENANT.onmicrosoft.com"
@@ -928,7 +929,10 @@ if ($CollectAppInventory) {
 		} else {
 
 			#If it is null, this may be an RDP connection, try using Explorer.exe owner
+			<#
 			$users = Get-WmiObject Win32_Process -Filter "Name='explorer.exe'" | ForEach-Object { $_.GetOwner() } | Select-Object -Unique -Expand User
+			#>
+			$users = Get-CimInstance Win32_Process -Filter "Name='explorer.exe'" | Invoke-CimMethod -MethodName GetOwner | Select-Object -ExpandProperty User
 
 			if ($users -ne $null) {
 				#Set HKU drive if not set
@@ -951,7 +955,7 @@ if ($CollectAppInventory) {
 	If ($ComputerNameForSID -like "*CPC-*") {
 		#This is a CPC - we NEED to use Explorer.exe now. This is slightly redundant as it's included above although, both sections shouldn't run.
 		#write-host "CPC"
-		$users = Get-WmiObject Win32_Process -Filter "Name='explorer.exe'" | ForEach-Object { $_.GetOwner() } | Select-Object -Unique -Expand User
+		$users = Get-CimInstance Win32_Process -Filter "Name='explorer.exe'" | Invoke-CimMethod -MethodName GetOwner | Select-Object -ExpandProperty User
 
 		if ($users -ne $null) {
 			#Set HKU drive if not set
