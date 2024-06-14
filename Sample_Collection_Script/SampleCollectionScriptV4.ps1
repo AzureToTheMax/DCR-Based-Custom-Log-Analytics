@@ -8,13 +8,14 @@ Sample Data Collector for use with the generic Log Analytics DCR ingestion guide
 Author:      Maxton Allen
 Contact:     @AzureToTheMax
 Created:     2023-02-28
-Updated:     2023-02-28
+Updated:     2024-06-13
 Credit:	     This script is based on the client-side script by Jan Ketil Skanke (@JankeSkanke) of the MSEndpointMgr team for the Intune Enhanced Inventory project.
 
             
 Version history:
 1 - 2023-02-28 Created
 2 - 2023-05-27 Updated to use AADDeviceTrust
+3 - 2024-06-13 Updated explorer.exe user locater from Get-WmiObjec (now commented out) to Get-CimInstance to support PowerShell 7.0
 
 #>
 
@@ -473,7 +474,8 @@ if($CollectData) {
 	}
 	[System.Collections.ArrayList]$NetWorkArrayList = $NetWorkArray
 
-	$users = Get-WmiObject Win32_Process -Filter "Name='explorer.exe'" | ForEach-Object { $_.GetOwner() } | Select-Object -Unique -Expand User
+	#$users = Get-WmiObject Win32_Process -Filter "Name='explorer.exe'" | ForEach-Object { $_.GetOwner() } | Select-Object -Unique -Expand User
+	$users = Get-CimInstance Win32_Process -Filter "Name='explorer.exe'" | Invoke-CimMethod -MethodName GetOwner | Select-Object -ExpandProperty User
 	$ComputerOSInfo = Get-CimInstance -ClassName Win32_OperatingSystem
 	$ComputerLastBoot = $ComputerOSInfo.LastBootUpTime
     $ComputerUpTime = [int](New-TimeSpan -Start $ComputerLastBoot -End $Date).Days
