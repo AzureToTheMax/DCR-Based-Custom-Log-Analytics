@@ -9,7 +9,7 @@ Collects information regarding "Microsft Teams" and "Remote Desktop WebRTC Redir
 Author:      Maxton Allen
 Contact:     @AzureToTheMax
 Created:     2023-02-15
-Updated:     2023-06-17
+Updated:     2024-06-13
 This script is based on the client-side script by Jan Ketil Skanke (@JankeSkanke) of the MSEndpointMgr team for the Intune Enhanced Inventory project.
 
 
@@ -17,6 +17,7 @@ This script is based on the client-side script by Jan Ketil Skanke (@JankeSkanke
 Version history:
 1 - 2023-02-15 Created
 2 - 2023-06-17 updated to new HTTP auth
+3 - 2024-06-13 Updated explorer.exe user locater from Get-WmiObjec (now commented out) to Get-CimInstance to support PowerShell 7.0
 #>
 
 
@@ -518,7 +519,8 @@ $ComputerManufacturer = $ComputerInfo.Manufacturer
 if ($CollectAppInventory) {
 
 		#Gather the active user
-		$users = Get-WmiObject Win32_Process -Filter "Name='explorer.exe'" | ForEach-Object { $_.GetOwner() } | Select-Object -Unique -Expand User
+		#$users = Get-WmiObject Win32_Process -Filter "Name='explorer.exe'" | ForEach-Object { $_.GetOwner() } | Select-Object -Unique -Expand User
+  		$users = Get-CimInstance Win32_Process -Filter "Name='explorer.exe'" | Invoke-CimMethod -MethodName GetOwner | Select-Object -ExpandProperty User
 
 		if ($users -ne $null) {
 			#Set HKU drive if not set
