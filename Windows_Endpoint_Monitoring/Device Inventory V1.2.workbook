@@ -1,0 +1,1198 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "<img src=\"https://azuretothemax.files.wordpress.com/2023/03/image0001.png?w=1024\" height=\"100\")>"
+      },
+      "customWidth": "15",
+      "name": "text - 12",
+      "styleSettings": {
+        "maxWidth": "15"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "\r\n# Device Inventory V1\r\n---\r\nThis workbook is used to monitor your Windows Endpoint Environments Hardware Inventory. Use the below selectors to alter the viewable data Time Range and choose a tab of information to view. Only data points ingested during the selected time range will be displayed.\r\n\r\nMore information can be found at https://azuretothemax.net/log-analytics-index/\r\n\r\n\r\n",
+        "style": "info"
+      },
+      "customWidth": "85",
+      "name": "Info",
+      "styleSettings": {
+        "maxWidth": "85"
+      }
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "f20700c8-40ea-4bc5-b658-90bea702d608",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time Range",
+            "type": 4,
+            "description": "This drop down controls how much time backwards worth of data to display. Only data received within the selected range is displayed",
+            "isRequired": true,
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2592000000
+                }
+              ],
+              "allowCustom": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": {
+              "durationMs": 2592000000
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "customWidth": "50",
+      "name": "parameters - 3"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "4d0ee788-3678-42a8-9df4-bc0325ea7de3",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Dashboard",
+            "subTarget": "Dashboard",
+            "preText": "Dashboard",
+            "postText": "",
+            "style": "link"
+          },
+          {
+            "id": "ac48d7ab-c997-494c-8531-1aa044809627",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Queries",
+            "subTarget": "Queries",
+            "style": "link"
+          },
+          {
+            "id": "e55aca21-8fd6-4e8a-9245-bd8518971cf9",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "OS Information",
+            "subTarget": "OSInstallInformation",
+            "style": "link"
+          },
+          {
+            "id": "09d952fe-f92b-4bc7-a4c9-c277666afbd7",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "BIOS Information",
+            "subTarget": "BIOSInformation",
+            "style": "link"
+          },
+          {
+            "id": "07de5b60-c132-483d-89e8-60f28d1a1789",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Ingestion Information",
+            "subTarget": "IngestionInformation",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "links - 7"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Dashboard",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "---\r\n# Hardware Model Information\r\n---\r\nUse the below two exportable queries to get detailed information on your hardware model breakdown as well as a per-device general overview.\r\n\r\n---\r\n\r\n### Hardware Model Breakdown\r\nProvides a pie chart view of all device models.\r\n\r\n---\r\n\r\n### Hardware Overview\r\nProvides a more detailed list overview of information shown in the pie chart.\r\n",
+              "style": "info"
+            },
+            "name": "text - 10"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated {TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| extend Model = iff(ComputerName notcontains \"CPC-\", Model, (iff(CPULogical == \"2\", \"Standard 2CPU CPC\", (iff(CPULogical == \"4\",\"Premium 4CPU CPC\",\"CPC Other\")))))\r\n| project TimeOfData = (TimeGenerated), ComputerName, PrimaryUserUPN, PCSystemTypeEx, Manufacturer, Model, SerialNumber\r\n| sort by todatetime( TimeOfData) asc\r\n| summarize Count=count() by Model\r\n| render piechart\r\n| sort by Count",
+              "size": 0,
+              "title": "Hardware Model Breakdown",
+              "noDataMessage": "No data found?",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "createOtherGroup": 15
+              }
+            },
+            "customWidth": "25",
+            "name": "Hardware Model Breakdown"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated {TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| extend Model = iff(ComputerName notcontains \"CPC-\", Model, (iff(CPULogical == \"2\", \"Standard 2CPU CPC\", (iff(CPULogical == \"4\",\"Premium 4CPU CPC\",\"CPC Other\")))))\r\n| project TimeOfData = (TimeGenerated), ComputerName, PrimaryUserUPN, PCSystemTypeEx, Manufacturer, Model, SerialNumber\r\n| sort by todatetime( TimeOfData) asc",
+              "size": 0,
+              "title": "Hardware Overview",
+              "noDataMessage": "No data found?",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "75",
+            "name": "Hardware Overview"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\r\n# Uptime Monitoring\r\n---\r\n\r\n### Chart: Last Boot Time\r\nThis is a chart of the last boot time for devices. Please mind your selected Time Range. For example: If the last time a device checked in was 6 days ago, and it has seen been offline, you need a time range of at least 6 days to view that data point. The last data point ingestion time is when the device last sent data, not when it last rebooted. So, the last reboot being 8 days ago or 600 days ago has no effect.\r\n\r\n---\r\n\r\n### List: Last Boot Time\r\nThis provides the same information as the chart in a more exportable and granular breakdown. \r\n",
+              "style": "info"
+            },
+            "name": "text - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL \r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| sort by LastBoot\r\n| summarize Count=count() by bin(todatetime(LastBoot), 1d)\r\n",
+              "size": 2,
+              "title": "Chart: Last Boot Time",
+              "noDataMessage": "No data found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "barchart",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "Count",
+                    "color": "redBright"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart: Last Boot Time",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL \r\n| where TimeGenerated{TimeRange}\r\n| where isnotempty(ComputerName)\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| sort by LastBoot asc\r\n| project TimeGenerated, ComputerName, LastBoot",
+              "size": 2,
+              "title": "List: Last Boot Times for Data Ingested in Selected Range",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 4,
+              "timeContext": {
+                "durationMs": 86400000
+              },
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "LastBoot",
+                    "formatter": 6
+                  }
+                ],
+                "labelSettings": [
+                  {
+                    "columnId": "TimeGenerated",
+                    "comment": "The Time This Data Was Gathered, more recent means more likely to stil be true"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "List: Last Boot Time",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": " ---\r\n# HDD Space Monitoring\r\nThe below queries assist in the monitoring of HDD free space. Use the below \r\nDisk Letter selection” to choose a disk letter to view such as C or D. Then, use the “Disk Minimum Space” to choose the minimum available disk space devices should have. Any devices under that threshold on the selected disk will be displayed below. \r\n\r\n---\r\n\r\n### Count of Devices with under X GB on disk Y\r\nThe count of devices during the selected time range which as of last check in had under X GB of space on the selected Y drive. This field is hard coded to color shift as it approaches 50 devices.\r\n\r\n---\r\n\r\n### Daily chart count of Devices with under X GB on disk Y\r\nThis displays the same data as the above however, instead of operating purely via the last check in, this will graph the count of devices each day which meet the criteria. This allows for trend monitoring.\r\n\r\n---\r\n\r\n### Devices with under 30 GB on disk C\r\nSame as the above but broken out by device and the disk space that given device has. Used for viewing specifics of the data. This list is hard coded to color shift to red as it approaches under 10 GB.\r\n",
+              "style": "info"
+            },
+            "name": "text - 2"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "f5712fd6-3d7d-402e-8a0c-e1e84ce0690c",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DiskLetter",
+                  "label": "Disk Letter Selection",
+                  "type": 1,
+                  "description": "Use this to select a disk letter to view (EX: C, D, etc)",
+                  "isRequired": true,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "value": "C"
+                },
+                {
+                  "id": "dfc2037f-6202-49c7-a888-180b7b975287",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DiskMinimumSpace",
+                  "label": "Disk Minimum Space",
+                  "type": 1,
+                  "description": "Use this to choose the minimum free space which results in devices showing up on the below queries",
+                  "isRequired": true,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "value": "50"
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - 10"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL \r\n| where TimeGenerated{TimeRange}\r\n| where isnotempty(DiskSpace)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| extend DiskSpaceDynamic = todynamic(DiskSpace)\r\n| mv-expand DiskSpaceDynamic\r\n| evaluate bag_unpack( DiskSpaceDynamic)\r\n| project-away DiskSpace\r\n| project TimeGenerated, ComputerName, Disk_C_FreeSpaceGB\r\n| where Disk_C_FreeSpaceGB <= {DiskMinimumSpace}\r\n| extend Disk_C_FreeSpaceGB = tostring(Disk_C_FreeSpaceGB)\r\n| sort by Disk_C_FreeSpaceGB\r\n| summarize count()",
+              "size": 4,
+              "title": "Count of Devices with under {DiskMinimumSpace} GB on disk {DiskLetter}",
+              "noDataMessage": "No Data Found in Selected Tme Range!",
+              "noDataMessageStyle": 4,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "count_",
+                    "formatter": 8,
+                    "formatOptions": {
+                      "min": 0,
+                      "max": 50,
+                      "palette": "greenRed"
+                    }
+                  }
+                ],
+                "labelSettings": [
+                  {
+                    "columnId": "count_",
+                    "label": "Devices with Low C Drive Space"
+                  }
+                ]
+              }
+            },
+            "name": "query - 6"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL \r\n| where TimeGenerated{TimeRange}\r\n| where isnotempty(DiskSpace)\r\n| extend DiskSpaceDynamic = todynamic(DiskSpace)\r\n| mv-expand DiskSpaceDynamic\r\n| evaluate bag_unpack( DiskSpaceDynamic)\r\n| project-away DiskSpace\r\n| project TimeGenerated, ComputerName, Disk_C_FreeSpaceGB\r\n| where Disk_{DiskLetter}_FreeSpaceGB <= {DiskMinimumSpace}\r\n| extend Disk_{DiskLetter}_FreeSpaceGB = tostring(Disk_C_FreeSpaceGB)\r\n| sort by Disk_{DiskLetter}_FreeSpaceGB\r\n| distinct ComputerName,bin(TimeGenerated,1d)\r\n| summarize Count=count() by bin(TimeGenerated,1d)\r\n| render areachart ",
+              "size": 0,
+              "title": "Daily chart count of Devices with under {DiskMinimumSpace} GB on disk {DiskLetter}",
+              "noDataMessage": "No data found for selected time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "areachart",
+              "tileSettings": {
+                "showBorder": false
+              },
+              "graphSettings": {
+                "type": 0
+              },
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "Count",
+                    "color": "redBright"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Daily chart count of Devices with under {DiskMinimumSpace} GB on disk {DiskLetter}",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL \r\n| where TimeGenerated{TimeRange}\r\n| where isnotempty(DiskSpace)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| extend DiskSpaceDynamic = todynamic(DiskSpace)\r\n| mv-expand DiskSpaceDynamic\r\n| evaluate bag_unpack( DiskSpaceDynamic)\r\n| project-away DiskSpace\r\n| project TimeGenerated, ComputerName, Disk_C_FreeSpaceGB\r\n| where Disk_{DiskLetter}_FreeSpaceGB <= {DiskMinimumSpace}\r\n| extend Disk_{DiskLetter}_FreeSpaceGB = tostring(Disk_C_FreeSpaceGB)\r\n| sort by Disk_{DiskLetter}_FreeSpaceGB asc\r\n",
+              "size": 3,
+              "title": "Devices with under {DiskMinimumSpace} GB on disk {DiskLetter}",
+              "noDataMessage": "No Data Found for Selected Time Range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "TimeGenerated",
+                    "formatter": 6
+                  },
+                  {
+                    "columnMatch": "Disk_C_FreeSpaceGB",
+                    "formatter": 8,
+                    "formatOptions": {
+                      "min": 0,
+                      "max": 10,
+                      "palette": "redGreen"
+                    }
+                  }
+                ],
+                "labelSettings": [
+                  {
+                    "columnId": "Disk_C_FreeSpaceGB",
+                    "label": "Disk C Free Space GB"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Devices with under {DiskMinimumSpace} GB on disk {DiskLetter}",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Dashboard"
+      },
+      "name": "Dashboard",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Queries",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Endpoint Queries\r\n\r\n---\r\n\r\n### Machines Owned by Searched Username\r\nMachines where the searched user is marked as the Primary User. You do not need the full / exact name, partial names are okay.\r\n\r\n---\r\n\r\n### Machine Search Results\r\nThe machine(s) found with the searced device name. You do not need the full / exact name, partial names are okay.\r\n\r\n---\r\n\r\n### Last Known Device IP(s)\r\nThis displays the most recent IP address(s) for the searched machine(s). One line is displayed per IP address. Additionally, information regarding the network adapter that IP is connected to as well as the network name is shown. This query will error out if the machine search finds no results.\r\n",
+              "style": "info"
+            },
+            "name": "text - 5"
+          },
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "parameters": [
+                {
+                  "id": "976f0411-044f-4d17-b4da-b5f92c509351",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "UserSearchName",
+                  "label": "User Search Name",
+                  "type": 1,
+                  "description": "Select the username to look up devices for",
+                  "isRequired": true,
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "value": "User Name"
+                },
+                {
+                  "id": "34c95aed-705d-449a-afeb-61216a5a0488",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "DeviceSearchName",
+                  "label": "Device Search Name",
+                  "type": 1,
+                  "description": "Device to Search For",
+                  "isRequired": true,
+                  "value": "Device Name",
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                }
+              ],
+              "style": "pills",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "parameters - 6"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL \r\n| where TimeGenerated{TimeRange}\r\n| where PrimaryUserUPN contains \"{UserSearchName}\"\r\n| distinct ComputerName, PrimaryUserUPN \r\n| sort by ComputerName",
+              "size": 1,
+              "title": "Machines Owned by Searched Username",
+              "noDataMessage": "No Machines Found for User!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Machines Owned by Searched Username",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL \r\n| where TimeGenerated{TimeRange}\r\n| where ComputerName contains \"{DeviceSearchName}\"\r\n| distinct ComputerName, PrimaryUserUPN \r\n| sort by ComputerName\r\n",
+              "size": 1,
+              "title": "Machine Search Results",
+              "noDataMessage": "No machines found in search!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table"
+            },
+            "customWidth": "50",
+            "name": "List: Machines Found by Search"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---"
+            },
+            "name": "text - 9"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated {TimeRange}\r\n| where ComputerName contains \"{DeviceSearchName}\"\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| extend NetworkAdapters_Expanded = todynamic(NetworkAdapters)\r\n| mv-expand NetworkAdapters_Expanded\r\n| evaluate bag_unpack(NetworkAdapters_Expanded)\r\n| extend IPv4_Address = NetIPv4Adress \r\n| project TimeGenerated, ComputerName, IPv4_Address, NetProfileName, NetInterfaceDescription\r\n\r\n",
+              "size": 0,
+              "title": "Last Known Device IP(s)",
+              "noDataMessage": "No data found for selected device in selected time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "Last Known Device IP(s)"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL \r\n| where TimeGenerated{TimeRange}\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| where ComputerName contains \"{DeviceSearchName}\"\r\n| sort by TimeGenerated\r\n\r\n",
+              "size": 0,
+              "title": "List: Full and Most Recent Data for Searched Machines",
+              "noDataMessage": "No data found for selected time range and/or Machine Name!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "query - 10"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Queries"
+      },
+      "name": "Queries",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "OS Information",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Device OS Install Date\r\nThis date represents the date that Windows was installed on a device. This should not be used as a means of determining hardware age! However, it does provide a glance into that concept and is still interesting to graph and see what story it has to tell. There are many ways this value can be reset.\r\n\r\nThe chart is grouped by 15 days while the list will provide exact granular details.\r\n\r\nKeep in mind that only data ingested during the selected time range is shown.\r\n",
+              "style": "info"
+            },
+            "name": "text - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| where isnotempty( InstallDate)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| project InstallDate, ComputerName, PrimaryUserUPN, Model, Manufacturer, TimeGenerated\r\n| summarize Count=count() by bin(todatetime(InstallDate), 15d)\r\n| render barchart \r\n",
+              "size": 0,
+              "title": "Device OS Install Date",
+              "noDataMessage": "No Data Found for selected time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "tileSettings": {
+                "showBorder": false
+              },
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "Count",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Device OS Install Date",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| where isnotempty( InstallDate)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| project InstallDate, ComputerName, PrimaryUserUPN, Model, Manufacturer, TimeGenerated\r\n| sort by todatetime(InstallDate) asc",
+              "size": 0,
+              "title": "Device OS Install Date",
+              "noDataMessage": "No Data Found for selected time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "tileSettings": {
+                "showBorder": false
+              },
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "Count",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Device OS Install Date - Copy",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\r\n# Bitlocker Information\r\nAll data below is based on data ingested during the selected time range. By default, these queries exclude devices with the Manufacturer “Xen” and/or devices that have “CPC” in the name as Cloud PCs do not currently support bitlocker. Only the most recent data per device is shown.\r\n\r\n---\r\n\r\n### Bitlocker Protection Status\r\nIs bitlocker on or off.\r\n\r\n---\r\n\r\n### Bitlocker Volume Status\r\nHas the actual volume encryption completed (Fully Encrypted), not started (fully decrypted), or in progress.\r\n\r\n---\r\n\r\n### Bitlocker Cipher\r\nWhat cipher is bitlocker using to protect the machines. This is typically always XtsAES128, assuming bitlocker is on.\r\n\r\n---\r\n\r\n### Bitlocker Protection Status\r\nThe full detailed status of each machine as well as when it checked in to report that data. Export this using the 3 dots or download arrow in the top right to get the full data.\r\n",
+              "style": "info"
+            },
+            "name": "text - 2"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| where Manufacturer != \"Xen\"\r\n| where ComputerName !has \"cpc\"\r\n| where isnotempty( BitlockerVolumeStatus)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| project BitlockerProtectionStatus\r\n| summarize Count=count() by BitlockerProtectionStatus\r\n| render piechart ",
+              "size": 0,
+              "title": "Bitlocker Protection Status",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "On",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "Off",
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "customWidth": "33",
+            "name": "Bitlocker Protection Status",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| where Manufacturer != \"Xen\"\r\n| where ComputerName !has \"cpc\"\r\n| where isnotempty( BitlockerVolumeStatus)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| project BitlockerVolumeStatus\r\n| summarize Count=count() by BitlockerVolumeStatus\r\n| render piechart ",
+              "size": 0,
+              "title": "Bitlocker Volume Status",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "On",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "Off",
+                    "color": "red"
+                  },
+                  {
+                    "seriesName": "FullyEncrypted",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "EncryptionInProgress",
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "customWidth": "33",
+            "name": "Bitlocker Volume Status",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| where Manufacturer != \"Xen\"\r\n| where ComputerName !has \"cpc\"\r\n| where isnotempty( BitlockerCipher)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| project BitlockerCipher\r\n| summarize Count=count() by BitlockerCipher\r\n| render piechart ",
+              "size": 0,
+              "title": "Bitlocker Cipher",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "On",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "Off",
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "customWidth": "33",
+            "name": "Bitlocker Cipher",
+            "styleSettings": {
+              "maxWidth": "33"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| where Manufacturer != \"Xen\"\r\n| where ComputerName !has \"cpc\"\r\n| where isnotempty( BitlockerVolumeStatus)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| project ComputerName, PrimaryUserUPN, Manufacturer, Model, BitlockerProtectionStatus, BitlockerVolumeStatus, TimeGenerated\r\n| sort by TimeGenerated\r\n",
+              "size": 0,
+              "title": "Bitlocker Protection Status",
+              "noDataMessage": "No Data Found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "Bitlocker Protection Status"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\r\n# Secure Boot\r\nAll data below is based on data ingested during the selected timerange. Only the most recent data per device is shown.\r\n\r\nThis shows if secure boot enabled/disabled or not supported (cannot be enabled on the device).\r\n\r\n",
+              "style": "info"
+            },
+            "name": "text - 8"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| where isnotempty( SecureBoot)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| summarize count() by SecureBoot\r\n| render piechart ",
+              "size": 0,
+              "title": "Secure Boot Enabled/Disabled",
+              "noDataMessage": "No data in selected time range! ",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "True",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "False",
+                    "color": "redBright"
+                  },
+                  {
+                    "seriesName": "Not Supported",
+                    "color": "orange"
+                  },
+                  {
+                    "seriesName": "Disabled",
+                    "color": "redBright"
+                  },
+                  {
+                    "seriesName": "Enabled",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Secure Boot Enabled/Disabled - Copy",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| where isnotempty( SecureBoot)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| project TimeGenerated, ComputerName, PrimaryUserUPN, SecureBoot, SerialNumber, Manufacturer, Model, PCSystemType, InstallDate\r\n| sort by TimeGenerated",
+              "size": 0,
+              "title": "Secure Boot Enabled/Disabled",
+              "noDataMessage": "No data in selected time range! ",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "True",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "False",
+                    "color": "redBright"
+                  },
+                  {
+                    "seriesName": "Not Supported",
+                    "color": "orange"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Secure Boot Enabled/Disabled - Copy",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "---\r\n# SMB v1 Client & Server\r\nAll data below is based on data ingested during the selected time range. Only the most recent data per device is shown.\r\n\r\nThis section is to monitor that the SMBv1 Client and Server have been correctly DISABLED (not just uninstalled) on your endpoint devices. Keep in mind even client devices (Windows Desktop OS) can act as an SMB server so both items need to be disabled. Please understand that devices reporting as “Incompletely/Not Disabled” do NOT necessarily indicate SMBv1 is enabled or in use, it just means it’s not fully disabled which will likely get you flagged on an audit. Additionally, even if you are green, you should ensure you actually have a policy pushing the disablement keys.\r\n\r\nSee: https://AzureToTheMax.net/2024/06/13/powershell-dcr-log-analytics-updates-smbv1-monitoring-wmi-update/\r\n\r\nAlso see: ttps://learn.microsoft.com/en-us/windows-server/storage/file-server/troubleshoot/detect-enable-and-disable-smbv1-v2-v3?tabs=client\r\n\r\nFor some reason, Microsoft doesn’t document the Intune policy names but they do exist! You can use a Settings Catalog to deploy the setting “Configure SMB v1 client driver” as ENABLED (this is enabling you to configure the driver state, not enabling the driver) with the drop-down then set to “Disable driver (recommended)” to disable the client side. You will also want to deploy “Configure SMB v1 server” as DISABLED to disable the server side. Obviously, test your policies and roll them out carefully.\r\n",
+              "style": "info"
+            },
+            "name": "text - 8 - Copy"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| where isnotempty( SMBv1Status)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| summarize count() by SMBv1Status\r\n| render piechart ",
+              "size": 0,
+              "title": "Chart: SMB V1 Correctly Disabled or Incorrectly/Not Disabled",
+              "noDataMessage": "No data in selected time range! ",
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "True",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "False",
+                    "color": "redBright"
+                  },
+                  {
+                    "seriesName": "Not Supported",
+                    "color": "orange"
+                  },
+                  {
+                    "seriesName": "Disabled",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "Enabled",
+                    "color": "redBright"
+                  },
+                  {
+                    "seriesName": "Correctly Disabled",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "Incompletely/Not Disabled",
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Chart: SMB V1 Correctly Disabled or Incorrectly/Not Disabled",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| where isnotempty( SMBv1Status)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| project TimeGenerated, ComputerName, PrimaryUserUPN, SMBv1Status, SerialNumber, Manufacturer, Model, PCSystemType, InstallDate\r\n| sort by TimeGenerated",
+              "size": 0,
+              "title": "List: SMB V1 Correctly Disabled or Incorrectly/Not Disabled",
+              "noDataMessage": "No data in selected time range! ",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "True",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "False",
+                    "color": "redBright"
+                  },
+                  {
+                    "seriesName": "Not Supported",
+                    "color": "orange"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "List: SMB V1 Correctly Disabled or Incorrectly/Not Disabled",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "OSInstallInformation"
+      },
+      "name": "OS Information",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "BIOS information",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "---\r\n# BIOS Release Date\r\n\r\nThis is the date that the BIOS/UEFI firmware version on the device was released. This is more relevant for physical devices than virtual devices.\r\n\r\nDevices running Windows 11 (that are compatible with Windows 11) should be automatically updating this. Devices on Windows 10, especially those with BitLocker enabled, can be very tricky to update. ",
+              "style": "info"
+            },
+            "name": "text - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| where isnotempty( BiosDate)\r\n| summarize arg_max(TimeGenerated,*) by ComputerName\r\n| project BiosDate = todatetime(BiosDate)\r\n| summarize Device_Count=count() by BiosDate\r\n| render barchart \r\n",
+              "size": 0,
+              "title": "Device OS Install Date",
+              "noDataMessage": "No Data Found for selected time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "tileSettings": {
+                "showBorder": false
+              },
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "Device_Count",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Device OS Install Date",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where TimeGenerated{TimeRange}\r\n| where isnotempty( BiosDate)\r\n| summarize arg_max(TimeGenerated, *) by ComputerName\r\n| extend BiosDate = todatetime(BiosDate)\r\n| project BiosDate, BiosVersion, ComputerName, PrimaryUserUPN, Model, Manufacturer, TimeGenerated\r\n| sort by todatetime(BiosDate) asc",
+              "size": 0,
+              "title": "Device OS Install Date",
+              "noDataMessage": "No Data Found for selected time range!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "tileSettings": {
+                "showBorder": false
+              },
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "Count",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "50",
+            "name": "Device OS Install Date - Copy",
+            "styleSettings": {
+              "maxWidth": "50"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "BIOSInformation"
+      },
+      "name": "BIOS information",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Ingestion Information",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "# Query Info\r\nThis page is primarily used by admins for monitoring the volume of incoming data and monitoring the deployment of updates (changes to the Script Version).\r\n",
+              "style": "info"
+            },
+            "name": "text - 4"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL \r\n| where TimeGenerated {TimeRange}\r\n| summarize arg_max(TimeGenerated, *) by ComputerName, ScriptVersion\r\n| summarize Total_Endpoints=count() by ScriptVersion\r\n",
+              "size": 0,
+              "showAnalytics": true,
+              "title": "Count of Devices Sending Data",
+              "noDataMessage": "No devices found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "labelSettings": [
+                  {
+                    "columnId": "Total_Endpoints",
+                    "label": "Total Endpoints",
+                    "comment": "Total Endpoints in Selected Range"
+                  }
+                ]
+              }
+            },
+            "customWidth": "15",
+            "name": "Count of Devices Sending Data",
+            "styleSettings": {
+              "maxWidth": "15"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL \r\n| where TimeGenerated {TimeRange}\r\n| summarize count() by ScriptVersion\r\n| render piechart ",
+              "size": 0,
+              "title": "Data Point Count per Script Version",
+              "noDataMessage": "No Data found!",
+              "noDataMessageStyle": 4,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "",
+                    "label": "None",
+                    "color": "redDark"
+                  },
+                  {
+                    "seriesName": "V4",
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "customWidth": "30",
+            "name": "Data Point Count per Script Version",
+            "styleSettings": {
+              "maxWidth": "30"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL \r\n| where TimeGenerated{TimeRange}\r\n| summarize count() by bin(TimeGenerated,1h), ScriptVersion\r\n| render areachart",
+              "size": 0,
+              "title": "Summary of Data Point Ingestion by Version (1H)",
+              "noDataMessage": "No data was found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "V4",
+                    "color": "green"
+                  },
+                  {
+                    "seriesName": "<empty>",
+                    "label": "None",
+                    "color": "redDark"
+                  }
+                ]
+              }
+            },
+            "customWidth": "40",
+            "name": "Summary of Data Point Ingestion by Version (1H)",
+            "styleSettings": {
+              "maxWidth": "40"
+            }
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "DeviceInventory_CL\r\n| where todatetime(TimeGenerated) {TimeRange}\r\n| summarize count() by ComputerName, bin((TimeGenerated), 1h)\r\n| sort by count_\r\n| render scatterchart \r\n",
+              "size": 0,
+              "title": "Summary of Data Point Ingestion by Computer (1H)",
+              "noDataMessage": "No Data found!",
+              "noDataMessageStyle": 5,
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "40",
+            "name": "Summary of Data Point Ingestion by Computer (1H)",
+            "styleSettings": {
+              "maxWidth": "40"
+            }
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "IngestionInformation"
+      },
+      "name": "Ingestion Information",
+      "styleSettings": {
+        "showBorder": true
+      }
+    }
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
