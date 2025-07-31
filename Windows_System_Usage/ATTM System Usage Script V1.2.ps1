@@ -785,8 +785,8 @@ $SearchXML = $ExecutionContext.InvokeCommand.ExpandString($SearchXML)
         if ($_.ID -eq 4624) {
             $User = $_.properties | Select-Object -Index 5
             $User = $User.value
-            $user = $user.TrimStart(".\AzureAD\")
-            $user = $user.TrimStart("AzureAD\")
+            $User = $User -Replace '^\.AzureAD\', ''
+            $User = $User -Replace '^AzureAD\', ''
            
     
             #Pull and translate the logon type to a human readable value
@@ -928,8 +928,8 @@ $SearchXML = $ExecutionContext.InvokeCommand.ExpandString($SearchXML)
                 $User = $_.properties | Select-Object -Index 5
                 $User = $User.value
                 #Trim Azure AD possible starting characters
-                $user = $user.TrimStart(".\AzureAD\")
-                $user = $user.TrimStart("AzureAD\")
+                $User = $User -Replace '^\.AzureAD\', ''
+                $User = $User -Replace '^AzureAD\', ''
       
       
                 #Pull and translate the logon type to a human readable value
