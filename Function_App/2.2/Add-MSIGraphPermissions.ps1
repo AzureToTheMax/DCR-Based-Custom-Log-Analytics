@@ -1,5 +1,5 @@
 # Requires -Modules Microsoft.Graph
-# Install the module. (You need admin on the machine.)
+# Run line 3 to install the graph modules if you do not have it.
 # Install-Module Microsoft.Graph
 
 # Set Static Variables
@@ -19,7 +19,7 @@ $Scopes = @(
 # Connect to MG Graph - scopes must be consented the first time you run this. 
 # Connect with Global Administrator
 Select-MgProfile -Name "beta"
-Connect-MgGraph -Scopes "Application.Read.All","AppRoleAssignment.ReadWrite.All"  -TenantId $TenantID -UseDeviceAuthentication
+Connect-MgGraph -Scopes "Application.Read.All","AppRoleAssignment.ReadWrite.All"  -TenantId $TenantID
 
 # Get the service principal for your managed identity.
 $ServicePrincipal = Get-MgServicePrincipal -Filter $ServicePrincipalFilter
